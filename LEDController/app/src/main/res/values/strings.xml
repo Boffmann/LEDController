@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">LEDController</string>
+    <string name="SearchDevice">Search Devices</string>
+    <string name="DisconnectButton">Disconnect</string>
 </resources>
