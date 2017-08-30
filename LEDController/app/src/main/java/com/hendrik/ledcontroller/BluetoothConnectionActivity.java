@@ -1,6 +1,5 @@
 package com.hendrik.ledcontroller;
 
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -23,6 +22,7 @@ import java.util.ArrayList;
 
 
 /**
+ * Activity to search for BT Devices and connect
  * @author Hendrik Tjabben
  */
 
@@ -30,9 +30,8 @@ public class BluetoothConnectionActivity extends BaseActivity {
 
     //CONSTANTS
 
+    /** Class TAG */
     private static final String TAG = "BTConnectionActivity";
-
-    private static final int REQUEST_ENABLE_BT = 1;
 
 //END CONSTANTS
 
@@ -59,8 +58,6 @@ public class BluetoothConnectionActivity extends BaseActivity {
             }
         }
     };
-
-
     /** The service connection to talk to the Bluetooth service */
     private ServiceConnection mBTServiceConnection = new ServiceConnection() {
         @Override
@@ -84,7 +81,7 @@ public class BluetoothConnectionActivity extends BaseActivity {
         }
     };
 
-//ENDMEMBER
+//ENDREGION MEMBER
 
 
 //REGION ACTIVITY LIFECYCLE
@@ -98,6 +95,8 @@ public class BluetoothConnectionActivity extends BaseActivity {
         //BTService.LocalBinder binder = ((BTApplication)getApplicationContext()).acquireBinding();
 
         Log.e(TAG, "OnCreateActivity");
+
+        //TODO Use acquireBind from Application
         Intent bindServiceIntent = new Intent(this, BTService.class);
         bindService(bindServiceIntent, mBTServiceConnection, BTService.BIND_AUTO_CREATE);
 
@@ -123,6 +122,9 @@ public class BluetoothConnectionActivity extends BaseActivity {
 
 //REGION INIT
 
+    /**
+     * Initialize Activity
+     */
     private void init() {
         mBTDevices = new ArrayList<>();
 
@@ -144,6 +146,7 @@ public class BluetoothConnectionActivity extends BaseActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 BluetoothDevice selectedDevice = (BluetoothDevice) adapterView.getItemAtPosition(i);
                 connect(selectedDevice);
+                startMainMenuActivity();
             }
         });
 
@@ -151,7 +154,6 @@ public class BluetoothConnectionActivity extends BaseActivity {
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mBTDevices.clear();
-                //TODO Start Discovery
                 mBTService.BTDiscovery();
             }
         });
@@ -160,6 +162,9 @@ public class BluetoothConnectionActivity extends BaseActivity {
 
 //ENDREGION INIT
 
+    /**
+     * Calls intent for MainMenu
+     */
     private void startMainMenuActivity() {
         Intent intent = new Intent(this, MainMenu.class);
         startActivity(intent);
@@ -169,8 +174,12 @@ public class BluetoothConnectionActivity extends BaseActivity {
 
 //REGION BLUETOOTH
 
+    /**
+     * Connect to a selected Device
+     * @param bluetoothDevice the BTDevice to connect to
+     */
     private void connect(final BluetoothDevice bluetoothDevice) {
-        //TODO Connect
+        mBTService.connectToDevice(bluetoothDevice);
     }
 
 //ENDREGION BLUETOOTH

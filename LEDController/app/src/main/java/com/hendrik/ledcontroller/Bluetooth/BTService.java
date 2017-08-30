@@ -50,18 +50,15 @@ public class BTService extends Service {
 
     /** The devices bluetooth adapter */
     private static BluetoothAdapter mBluetoothAdapter;
-
+    /** Thread to connect to a BT Device */
     private BluetoothConnectThread mConnectThread;
-
+    /** That that manages a BT Connection */
     private static ConnectedThread mConnectedThread;
     /** handler that gets info from Bluetooth service */
     private Handler mHandler;
-
-    private static BluetoothDevice mBluetoothDevice = null;
-
-
+    /** The connection state */
     public static int mState = STATE_NONE;
-
+    /** BT Binder */
     private final Binder mBinder = new LocalBinder();
 
 
@@ -69,6 +66,9 @@ public class BTService extends Service {
 
 //REGION CONSTRUCTOR
 
+    /**
+     * Default constructor
+     */
     public BTService() {
 
     }
@@ -105,16 +105,16 @@ public class BTService extends Service {
 
 //ENDREGION LIFECYCLE
 
+    /**
+     * Sets the connection state
+     * @param state the connection state to set
+     */
     private void setState(int state) {
         mState = state;
         if (mHandler != null) {
            //TODO mHandler.obtainMessage(AbstractActivity.MESSAGE_STATE_CHANGE, state, -1).sendToTarget();
         }
     }
-
-
-
-
 
     /**
      * Makes the device discoverable for other bluetooth devices
@@ -172,12 +172,13 @@ public class BTService extends Service {
      * @param bluetoothDevice the device to connect to
      */
     public void connectToDevice(final BluetoothDevice bluetoothDevice) {
-        if (mState == STATE_CONNECTING) {
+        //TODO Handle state connecting
+       /* if (mState == STATE_CONNECTING) {
             if (mConnectThread != null) {
                 mConnectThread.cancel();
                 mConnectThread = null;
             }
-        }
+        }*/
 
         // Cancel any thread currently running a connection
         if (mConnectedThread != null) {
@@ -190,13 +191,17 @@ public class BTService extends Service {
     }
 
 
-
+    /**
+     * Method that is called after a connection is established
+     * @param socket
+     */
     private synchronized void connected(BluetoothSocket socket) {
+        //TODO cancel thread that completed the connection
         // Cancel the thread that completed the connection
-        if (mConnectThread != null) {
+       /* if (mConnectThread != null) {
             mConnectThread.cancel();
             mConnectThread = null;
-        }
+        }*/
 
         // Cancel any thread currently running a connection
         if (mConnectedThread != null) {
@@ -216,6 +221,40 @@ public class BTService extends Service {
         setState(STATE_CONNECTED);
 
     }
+
+    private static Object obj = new Object();
+
+    /**
+     * Write a byte stream to the connected BT Device
+     * @param out
+     */
+    public static void write(byte[] out) {
+        //TODO Better and safer write
+        // Create temporary object
+        /*ConnectedThread r;
+        // Synchronize a copy of the ConnectedThread
+        synchronized (obj) {
+            if (mState != STATE_CONNECTED)
+                return;
+            r = mConnectedThread;
+        }
+        // Perform the write unsynchronized
+        r.write(out);*/
+
+        mConnectedThread.write(out);
+    }
+
+    /**
+     * Cancels the BT connection
+     */
+    public static void cancelConnection() {
+        if (mConnectedThread != null) {
+            mConnectedThread.cancel();
+        } else {
+            Log.w(TAG, "Connection is not established. Cancel disconnection");
+        }
+    }
+
 
     /**
      * This method is required for all devices running API23+
@@ -243,6 +282,9 @@ public class BTService extends Service {
 //REGION CLASSES
 
 
+    /**
+     * Class to establish a BT Connection
+     */
     private class BluetoothConnectThread extends Thread {
 
         /** Socket of the established connection */
@@ -279,6 +321,9 @@ public class BTService extends Service {
             mBluetoothSocket = tmp;
         }
 
+        /**
+         * Run method of Thread
+         */
         public void run() {
             // Cancel discovery because it otherwise slows down the connection.
             mBluetoothAdapter.cancelDiscovery();
@@ -329,16 +374,25 @@ public class BTService extends Service {
         public static final int MESSAGE_READ = 0;
         public static final int MESSAGE_WRITE = 1;
         public static final int MESSAGE_TOAST = 2;
-
-        // ... (Add other message types here as needed.)
     }
 
+    /**
+     * Class to manaage an established connection
+     */
     private class ConnectedThread extends Thread {
+        /** The BT Socket of the connection*/
         private final BluetoothSocket mBluetoothSocket;
+        /** Input stream from the BT Device */
         private final InputStream mInStream;
+        /** Output stream to sent to the BT Device */
         private final OutputStream mOutStream;
-        private byte[] mmBuffer; // mmBuffer store for the stream
+        /** Buffer to store for the stream */
+        private byte[] mmBuffer;
 
+        /**
+         * Constructor
+         * @param socket the connection socket
+         */
         public ConnectedThread(BluetoothSocket socket) {
             mBluetoothSocket = socket;
             InputStream tmpIn = null;
@@ -361,6 +415,9 @@ public class BTService extends Service {
             mOutStream = tmpOut;
         }
 
+        /**
+         * Run method of thread
+         */
         public void run() {
             mmBuffer = new byte[1024];
             int numBytes; // bytes returned from read()
@@ -382,7 +439,11 @@ public class BTService extends Service {
             }*/
         }
 
-        // Call this from the main activity to send data to the remote device.
+
+        /**
+         * Call this from the main activity to send data to the remote device.
+         * @param bytes the bytestrean to write
+         */
         public void write(byte[] bytes) {
             try {
                 mOutStream.write(bytes);
@@ -405,7 +466,9 @@ public class BTService extends Service {
             }
         }
 
-        // Call this method from the main activity to shut down the connection.
+        /**
+         * Call this method from the main activity to shut down the connection.
+         */
         public void cancel() {
             try {
                 mBluetoothSocket.close();
@@ -415,6 +478,9 @@ public class BTService extends Service {
         }
     }
 
+    /**
+     * Local Binder class
+     */
     public class LocalBinder extends Binder {
         public BTService getService() {
             return BTService.this;
