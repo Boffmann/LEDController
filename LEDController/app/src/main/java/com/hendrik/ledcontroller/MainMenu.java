@@ -29,7 +29,6 @@ public class MainMenu extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mBTService = ((BTApplication) getApplicationContext()).getBTService();
 
         setupLayout();
     }
@@ -54,7 +53,6 @@ public class MainMenu extends BaseActivity {
             @Override
             public void onClick(View view) {
                 byte[] on = {0x6F, 0x6E};
-                mBTService.write(on);
             }
         });
 
@@ -62,7 +60,6 @@ public class MainMenu extends BaseActivity {
             @Override
             public void onClick(View view) {
                 byte[] off = {0x6F, 0x66, 0x66};
-                mBTService.write(off);
             }
         });
 

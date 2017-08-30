@@ -2,21 +2,21 @@ package com.hendrik.ledcontroller;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Handler;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
-import com.hendrik.ledcontroller.Bluetooth.BTManager;
-import com.hendrik.ledcontroller.Bluetooth.IBTRunnable;
+import com.hendrik.ledcontroller.Bluetooth.BTService;
 import com.hendrik.ledcontroller.DataStructure.DeviceListAdapter;
 
 import java.util.ArrayList;
@@ -37,19 +37,14 @@ public class BluetoothConnectionActivity extends BaseActivity {
 //END CONSTANTS
 
 //MEMBER
-
-    /** The devices own bluetooth adatper */
-    private BluetoothAdapter mBluetoothAdapter;
-    /** Flag indicating that bluetooth is set up */
-    private boolean mIsBluetoothSetup = false;
-    /** Class to manage Bluetooth connection */
-    private BTManager mBTManager;
     /** ListAdapter to list discovered devices */
     private DeviceListAdapter mDeviceListAdapter;
     /** List to list all discovered new devices */
     public ArrayList<BluetoothDevice> mBTDevices = new ArrayList<>();
     /** List view to show all listed new devices */
     ListView mLvNewDevices;
+    /** The BTService */
+    private BTService mBTService = null;
     /** Create a BroadcastReceiver for ACTION_FOUND */
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -65,6 +60,30 @@ public class BluetoothConnectionActivity extends BaseActivity {
         }
     };
 
+
+    /** The service connection to talk to the Bluetooth service */
+    private ServiceConnection mBTServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            Log.e(TAG, "OnServiceConnected");
+
+            BTService.LocalBinder binder = (BTService.LocalBinder)iBinder;
+
+            mBTService = binder.getService();
+
+            ArrayList<BluetoothDevice> temp = mBTService.QueryPairedDevices();
+            for(BluetoothDevice device : temp) {
+                mBTDevices.add(device);
+            }
+            mDeviceListAdapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            mBTService = null;
+        }
+    };
+
 //ENDMEMBER
 
 
@@ -74,17 +93,22 @@ public class BluetoothConnectionActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
-        setUpBluetooth();
         setupLayout();
 
-        // List already paired devices
-        ArrayList<BluetoothDevice> temp = mBTManager.QueryPairedDevices();
-        for(BluetoothDevice device : temp) {
-            mBTDevices.add(device);
-        }
+        //BTService.LocalBinder binder = ((BTApplication)getApplicationContext()).acquireBinding();
+
+        Log.e(TAG, "OnCreateActivity");
+        Intent bindServiceIntent = new Intent(this, BTService.class);
+        bindService(bindServiceIntent, mBTServiceConnection, BTService.BIND_AUTO_CREATE);
+
 
         mDeviceListAdapter = new DeviceListAdapter(getApplicationContext(), R.layout.device_adapter_view, mBTDevices);
         mLvNewDevices.setAdapter(mDeviceListAdapter);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     @Override
@@ -101,34 +125,10 @@ public class BluetoothConnectionActivity extends BaseActivity {
 
     private void init() {
         mBTDevices = new ArrayList<>();
-    }
 
-
-    private void setUpBluetooth() {
-        if( mIsBluetoothSetup ) {
-            Log.w(TAG, "Bluetooth already setup");
-            return;
-        }
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        if ( mBluetoothAdapter == null ) {
-            //Device does not support bluetooth
-            //TODO Textbox to inform user
-        }
-
-        //Check if bluetooth is enabled and ask to enable it if it is not
-        if (!mBluetoothAdapter.isEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        }
-
-        // Register for broadcasts when a device is discovered.
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(mReceiver, filter);
 
-
-        mBTManager = new BTManager(mBluetoothAdapter, this);
-        mIsBluetoothSetup = true;
     }
 
     /**
@@ -151,18 +151,14 @@ public class BluetoothConnectionActivity extends BaseActivity {
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mBTDevices.clear();
-                mBTManager.BTDiscovery();
+                //TODO Start Discovery
+                mBTService.BTDiscovery();
             }
         });
 
     }
 
 //ENDREGION INIT
-
-    private void createBTService(final BluetoothSocket socket) {
-
-        ((BTApplication) getApplicationContext()).createBTService(socket);
-    }
 
     private void startMainMenuActivity() {
         Intent intent = new Intent(this, MainMenu.class);
@@ -174,14 +170,7 @@ public class BluetoothConnectionActivity extends BaseActivity {
 //REGION BLUETOOTH
 
     private void connect(final BluetoothDevice bluetoothDevice) {
-        mBTManager.connect(bluetoothDevice, new IBTRunnable() {
-            @Override
-            public void BTCallback(BluetoothSocket socket) {
-                Log.e(TAG, "SUCCESS");
-                createBTService(socket);
-                startMainMenuActivity();
-            }
-        });
+        //TODO Connect
     }
 
 //ENDREGION BLUETOOTH

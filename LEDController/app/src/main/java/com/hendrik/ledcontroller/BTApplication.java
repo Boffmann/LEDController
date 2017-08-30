@@ -1,11 +1,12 @@
 package com.hendrik.ledcontroller;
 
 import android.app.Application;
-import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
 import android.os.Handler;
-import android.util.Log;
 
 import com.hendrik.ledcontroller.Bluetooth.BTService;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -14,27 +15,73 @@ import com.hendrik.ledcontroller.Bluetooth.BTService;
 
 public class BTApplication extends Application {
 
+//REGION CONSTANTS
+
     private final static String TAG = "BTApplication";
 
-    private BTService mBluetoothService;
+//ENDREGION CONSTANTS
 
+//REGION MEMBER
 
-    public void createBTService(final BluetoothSocket bluetoothSocket) {
+    private final AtomicInteger mRefCount = new AtomicInteger();
 
+    //private BTService.LocalBinder mBinder;
 
-        mBluetoothService = new BTService(bluetoothSocket);
-    }
-
-    public BTService getBTService() {
-        if(mBluetoothService == null) {
-            Log.e(TAG, "No BTService created yet");
-            return null;
+    Handler.Callback realCallback = null;
+    Handler handler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            if (realCallback != null) {
+                realCallback.handleMessage(msg);
+            }
         }
-        return mBluetoothService;
+    };
+
+//ENDREGION MEMBER
+
+//REGION CONSTRUCTOR
+
+    public BTApplication() {
+
     }
+
+//ENDREGION CONSTRUCTOR
+
+
+
+//REGION SET/GET
+
+    private void startBTService() {
+
+        Intent intent = new Intent(this, BTService.class);
+        startService(intent);
+    }
+
+    public void stopBTService() {
+        Intent intent = new Intent(this, BTService.class);
+        stopService(intent);
+    }
+
+    public void releaseBinding() {
+        if (mRefCount.get() == 0 || mRefCount.decrementAndGet() == 0) {
+            // release binding
+        }
+    }
+
+    public Handler getHandler() {
+        return handler;
+    }
+
+    public void setCallBack(Handler.Callback callback) {
+        this.realCallback = callback;
+    }
+
+//ENDREGION SET/GET
+
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        startBTService();
     }
 }

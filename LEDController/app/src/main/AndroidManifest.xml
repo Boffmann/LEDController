@@ -17,6 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name=".BTApplication">
+        <service android:name="com.hendrik.ledcontroller.Bluetooth.BTService"/>
         <activity android:name=".BluetoothConnectionActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
