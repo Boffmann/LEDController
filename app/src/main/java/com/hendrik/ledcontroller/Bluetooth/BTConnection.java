@@ -3,13 +3,10 @@ package com.hendrik.ledcontroller.Bluetooth;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.os.Bundle;
-import android.os.Message;
 import android.os.ParcelUuid;
 import android.util.Log;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.UUID;
 
 /**
@@ -25,8 +22,8 @@ public class BTConnection {
     private BluetoothDevice mConnectedDevice;
     /** Socket of the established connection */
     private BluetoothSocket mBluetoothSocket;
-    /** Output stream to write data over */
-    private OutputStream mOutputStream;
+    /** Thread running in background and making IO to the device */
+    BtIOThread mIOThread;
 
     public BTConnection() {
 
@@ -68,7 +65,7 @@ public class BTConnection {
             // Connect to the remote device through the socket. This call blocks
             // until it succeeds or throws an exception.
             mBluetoothSocket.connect();
-            mOutputStream = mBluetoothSocket.getOutputStream();
+            mIOThread = new BtIOThread(mBluetoothSocket.getOutputStream());
         } catch (IOException e) {
             mBluetoothSocket = null;
             mConnectedDevice = null;
@@ -82,6 +79,7 @@ public class BTConnection {
 
             return false;
         }
+        mIOThread.start();
         mConnectedDevice = btDevice;
 
         return true;
@@ -91,14 +89,7 @@ public class BTConnection {
         return true;
     }
 
-    public boolean write(byte[] bytes) {
-        try {
-            mOutputStream.write(bytes);
-            Log.w(TAG, "Send");
-        } catch (IOException e) {
-            Log.e(TAG, "Error occurred when sending data", e);
-            return false;
-        }
-        return true;
+    public void write(byte[] bytes) {
+        mIOThread.addIO(bytes);
     }
 }
