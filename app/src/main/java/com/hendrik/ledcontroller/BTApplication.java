@@ -27,8 +27,6 @@ public class BTApplication extends Application {
     /** Counter for bound activities */
     private final AtomicInteger mRefCount = new AtomicInteger();
 
-    //private BTService.LocalBinder mBinder;
-
     Handler.Callback realCallback = null;
     /** BT Connection Handler */
     Handler handler = new Handler() {

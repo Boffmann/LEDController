@@ -22,7 +22,8 @@ import java.util.ArrayList;
 
 
 /**
- * Activity to search for BT Devices and connect
+ * Activity to search for BT Devices and connect.
+ * Starting activity
  * @author Hendrik Tjabben
  */
 
@@ -44,7 +45,7 @@ public class BluetoothConnectionActivity extends BaseActivity {
     ListView mLvNewDevices;
     /** The BTService */
     private BTService mBTService = null;
-    /** Create a BroadcastReceiver for ACTION_FOUND */
+    /** Create a BroadcastReceiver for ACTION_FOUND. Bluetooth*/
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
