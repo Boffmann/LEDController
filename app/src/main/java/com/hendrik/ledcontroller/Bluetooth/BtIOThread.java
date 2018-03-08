@@ -4,9 +4,7 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
 /**
@@ -18,47 +16,58 @@ public class BtIOThread extends Thread {
     private final static String TAG = "BTIOThread";
 
     /** List to store all bluetooth commands in */
-    private Map<String, byte[]> mCommandList;
+    private ArrayList<byte[]> mCommandList;
     /** Mutex to synchronize access on commandList */
     private Semaphore mSemaphore;
     /** Output stream to write data over */
     private OutputStream mOutputStream;
 
+    private Object lock = new Object();
+
     public BtIOThread(final OutputStream outputStream) {
-        mCommandList = new HashMap();
+        mCommandList = new ArrayList();
         mSemaphore = new Semaphore(1);
         mOutputStream = outputStream;
     }
 
     public void run() {
         while(true) {
-            try {
-                Thread.sleep(10000);
-                mSemaphore.acquire();
-                for (Map.Entry<String, byte[]> pair : mCommandList.entrySet()) {
-                    write(pair.getValue());
-                    Thread.sleep(10000);
+            synchronized (lock) {
+                if (mCommandList.isEmpty()) {
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        mSemaphore.acquire();
+                        for (int i = 0; i < mCommandList.size(); i++) {
+                            write(mCommandList.get(i));
+                            // TODO Add mechanism to check if command was transmitted correctly
+                            mCommandList.remove(i);
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } finally {
+                        mSemaphore.release();
+                    }
                 }
-                mCommandList.clear();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } finally {
-                mSemaphore.release();
             }
         }
     }
 
     public void addIO(final byte[] data){
-        UUID uuid = UUID.randomUUID();
-        try {
-            mSemaphore.acquire();
-            mCommandList.put(uuid.toString(), data);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            mSemaphore.release();
+        synchronized (lock) {
+            try {
+                mSemaphore.acquire();
+                mCommandList.add(data);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                mSemaphore.release();
+                lock.notify();
+            }
         }
-
     }
 
     private boolean write(final byte[] data) {
