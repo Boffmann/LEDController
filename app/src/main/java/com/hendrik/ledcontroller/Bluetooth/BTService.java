@@ -178,7 +178,6 @@ public class BTService extends Service {
 
             mBluetoothAdapter.startDiscovery();
         } else {
-
             checkBTPermissions();
 
             mBluetoothAdapter.startDiscovery();
@@ -190,6 +189,10 @@ public class BTService extends Service {
      * @param bluetoothDevice the device to connect to
      */
     public void connectToDevice(final BluetoothDevice bluetoothDevice) {
+        if (mBluetoothAdapter.isDiscovering()){
+            // Cancel discovery just to make sure. Discovering is a resource consuming process
+            mBluetoothAdapter.cancelDiscovery();
+        }
         mBTConnection = new BTConnection();
         if (!mBTConnection.connect(bluetoothDevice, mBluetoothAdapter)) {
             // TODO Handle failed connection

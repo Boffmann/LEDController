@@ -13,14 +13,14 @@ import com.hendrik.ledcontroller.R;
 import java.util.ArrayList;
 
 
-    public class DeviceListAdapter extends ArrayAdapter<BluetoothDevice> {
+    public class DeviceArrayAdapter extends ArrayAdapter<BluetoothDevice> {
 
         private LayoutInflater mLayoutInflater;
         private ArrayList<BluetoothDevice> mDevices;
         private int  mViewResourceId;
 
-        public DeviceListAdapter(Context context, int tvResourceId, ArrayList<BluetoothDevice> devices){
-            super(context, tvResourceId,devices);
+        public DeviceArrayAdapter(Context context, int tvResourceId, ArrayList<BluetoothDevice> devices){
+            super(context, tvResourceId, devices);
             mDevices = devices;
             mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             mViewResourceId = tvResourceId;

@@ -14,8 +14,33 @@
             android:layout_width="match_parent"
             android:text="@string/SearchDevice"/>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="Paired devices"/>
+
         <ListView
-            android:id="@+id/lvNewDevices"
+            android:id="@+id/lvPairedDevices"
+            android:layout_width="match_parent"
+            android:layout_height="150dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="Discovered unpaired devices"/>
+
+        <ListView
+            android:id="@+id/lvUnpairedDevices"
+            android:layout_width="360dp"
+            android:layout_height="150dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="Discovered near devices"/>
+
+        <ListView
+            android:id="@+id/lvNearDevices"
             android:layout_width="360dp"
             android:layout_height="150dp" />
 
