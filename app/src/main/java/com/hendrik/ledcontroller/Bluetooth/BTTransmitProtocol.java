@@ -9,24 +9,27 @@ public class BTTransmitProtocol {
     public enum ActionType {
         ON,
         OFF,
-        BRIGHTNESS
+        BRIGHTNESS;
+
+        public static int toAscii(final ActionType type) {
+            switch (type) {
+                case ON:
+                    return 48;
+                case OFF:
+                    return 49;
+                case BRIGHTNESS:
+                    return 50;
+                default:
+                    return 0;
+            }
+        }
     }
 
     public static boolean isAnswerForCommand(final byte[] answer, final BTCommand command) {
-        switch (command.getAction()) {
-            case ON:
-                if (answer[0] == 48) {
-                    return true;
-                }
-                return false;
-            case OFF:
-                if (answer[0] == 49) {
-                    return true;
-                }
-                return false;
-            default:
-                return false;
+        if (answer[0] == ActionType.toAscii(command.getAction())) {
+            return true;
         }
+        return false;
     }
 
 }
