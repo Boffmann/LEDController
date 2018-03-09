@@ -8,6 +8,8 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.hendrik.ledcontroller.Bluetooth.BTCommand;
 import com.hendrik.ledcontroller.Bluetooth.BTService;
@@ -82,6 +84,9 @@ public class MainMenu extends BaseActivity {
         Button onButton = (Button)findViewById(R.id.button_on);
         Button offButton = (Button)findViewById(R.id.button_off);
         Button disconnectButton = (Button)findViewById(R.id.button_dissconnect);
+        SeekBar brightnessSeekBar = (SeekBar)findViewById(R.id.brightness_seekbar);
+        final TextView brightnessSeekBarValueView = (TextView)findViewById(R.id.brightness_seekbar_value);
+        brightnessSeekBarValueView.setText(String.valueOf(brightnessSeekBar.getProgress())+"%");
 
         onButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,7 +100,23 @@ public class MainMenu extends BaseActivity {
             @Override
             public void onClick(View view) {
                 byte[] off = {0x6F, 0x66, 0x66};
-                BTService.write(off);
+                BTService.write(new BTCommand(BTTransmitProtocol.ActionType.OFF, 1));
+            }
+        });
+
+        brightnessSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                brightnessSeekBarValueView.setText(String.valueOf(seekBar.getProgress())+"%");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // do nothing
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
 
