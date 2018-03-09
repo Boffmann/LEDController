@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -204,22 +206,10 @@ public class BTService extends Service {
 
     /**
      * Write a byte stream to the connected BT Device
-     * @param out
+     * @param command The unserialized command to transmit to the BTDevice
      */
-    public static void write(byte[] out) {
-        //TODO Better and safer write
-        // Create temporary object
-        /*ConnectedThread r;
-        // Synchronize a copy of the ConnectedThread
-        synchronized (obj) {
-            if (mState != STATE_CONNECTED)
-                return;
-            r = mConnectedThread;
-        }
-        // Perform the write unsynchronized
-        r.write(out);*/
-
-        mBTConnection.write(out);
+    public static void write(final BTCommand command) {
+        mBTConnection.write(command);
     }
 
     /**

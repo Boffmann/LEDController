@@ -16,7 +16,7 @@ public class BtIOThread extends Thread {
     private final static String TAG = "BTIOThread";
 
     /** List to store all bluetooth commands in */
-    private ArrayList<byte[]> mCommandList;
+    private ArrayList<BTCommand> mCommandList;
     /** Mutex to synchronize access on commandList */
     private Semaphore mSemaphore;
     /** Output stream to write data over */
@@ -42,8 +42,9 @@ public class BtIOThread extends Thread {
                     try {
                         mSemaphore.acquire();
                         for (int i = 0; i < mCommandList.size(); i++) {
-                            write(mCommandList.get(i));
-                            // TODO Add mechanism to check if command was transmitted correctly
+                            write(BTSerializer.serialize(mCommandList.get(i)));
+                            Log.e(TAG, "Write: " + mCommandList.get(i).toString());
+                            // TODO Add mechanism to check if command was transmitted correctly. Transmit next command after receive notification occurs
                             mCommandList.remove(i);
                         }
                     } catch (InterruptedException e) {
@@ -56,15 +57,17 @@ public class BtIOThread extends Thread {
         }
     }
 
-    public void addIO(final byte[] data){
+    public void addIO(final BTCommand command){
         synchronized (lock) {
             try {
                 mSemaphore.acquire();
-                mCommandList.add(data);
+                mCommandList.add(command);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } finally {
                 mSemaphore.release();
+                // Two notify calls will not wake up the thread twice, which is good
+                // https://stackoverflow.com/questions/10684111/can-notify-wake-up-the-same-thread-multiple-times
                 lock.notify();
             }
         }

@@ -7,11 +7,12 @@ import android.os.ParcelUuid;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.UUID;
 
 /**
  * Class representing a bluetooth connection
- * Created by hendr on 08.03.2018.
+ * Created by hendrik tjabben on 08.03.2018.
  */
 
 public class BTConnection {
@@ -89,7 +90,7 @@ public class BTConnection {
         return true;
     }
 
-    public void write(byte[] bytes) {
-        mIOThread.addIO(bytes);
+    public void write(final BTCommand command) {
+        mIOThread.addIO(command);
     }
 }

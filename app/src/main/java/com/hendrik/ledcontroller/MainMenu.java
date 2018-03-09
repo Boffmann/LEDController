@@ -9,7 +9,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.hendrik.ledcontroller.Bluetooth.BTCommand;
 import com.hendrik.ledcontroller.Bluetooth.BTService;
+import com.hendrik.ledcontroller.Bluetooth.BTTransmitProtocol;
 
 
 public class MainMenu extends BaseActivity {
@@ -85,7 +87,7 @@ public class MainMenu extends BaseActivity {
             @Override
             public void onClick(View view) {
                 byte[] on = {0x6F, 0x6E};
-                BTService.write(on);
+                BTService.write(new BTCommand(BTTransmitProtocol.ActionType.ON, 1));
             }
         });
 
@@ -104,10 +106,6 @@ public class MainMenu extends BaseActivity {
                 startBTConnectionActivity();
             }
         });
-
-
-
-
     }
 
 //ENDREGION INIT
