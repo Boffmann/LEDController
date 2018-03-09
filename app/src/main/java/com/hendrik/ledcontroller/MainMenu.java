@@ -68,6 +68,7 @@ public class MainMenu extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unbindService(mBTServiceConnection);
     }
 
 //ENDREGION ACTIVITY LIFECYCLE

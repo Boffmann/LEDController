@@ -105,11 +105,4 @@ public class BTApplication extends Application {
 
         startBTService();
     }
-
-    @Override
-    public void onTerminate() {
-        super.onTerminate();
-
-        stopBTService();
-    }
 }

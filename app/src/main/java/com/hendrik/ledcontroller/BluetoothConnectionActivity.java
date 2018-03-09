@@ -125,16 +125,13 @@ public class BluetoothConnectionActivity extends BaseActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
 
         // Don't forget to unregister the ACTION_FOUND receiver.
         unregisterReceiver(mReceiverUnpairedFound);
+        unbindService(mBTServiceConnection);
+        ((BTApplication) getApplication()).stopBTService();
     }
 
 //ENDREGION ACTIVITY LIFECYCLE
