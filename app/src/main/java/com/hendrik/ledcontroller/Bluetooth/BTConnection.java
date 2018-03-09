@@ -66,7 +66,7 @@ public class BTConnection {
             // Connect to the remote device through the socket. This call blocks
             // until it succeeds or throws an exception.
             mBluetoothSocket.connect();
-            mIOThread = new BtIOThread(mBluetoothSocket.getOutputStream());
+            mIOThread = new BtIOThread(mBluetoothSocket.getInputStream(), mBluetoothSocket.getOutputStream());
         } catch (IOException e) {
             mBluetoothSocket = null;
             mConnectedDevice = null;
