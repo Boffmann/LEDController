@@ -18,6 +18,8 @@ public class BtIOThread extends Thread {
     /** Time to wait until assume timeout */
     private final long mBluetoothTimeoutValueMilliSeconds = 5000;
 
+    private final int mTimesToRetryToSend = 3;
+
     /** List to store all bluetooth commands in */
     private ArrayList<BTCommand> mCommandList;
     /** Mutex to synchronize access on commandList */
@@ -45,6 +47,8 @@ public class BtIOThread extends Thread {
         TIMEOUT,
         FAILURE
     }
+
+
 
     /***
      * Wait until bt device confirms received data or timeout
@@ -108,6 +112,7 @@ public class BtIOThread extends Thread {
     }
 
     public void run() {
+        int timesRetryToSend = 0;
         while(true) {
             synchronized (lock) {
                 if (mCommandList.isEmpty()) {

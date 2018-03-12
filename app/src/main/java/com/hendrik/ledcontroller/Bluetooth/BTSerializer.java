@@ -1,6 +1,7 @@
 package com.hendrik.ledcontroller.Bluetooth;
 
-import java.util.Map;
+import android.graphics.Color;
+import android.util.Log;
 
 /**
  * Created by hendr on 09.03.2018.

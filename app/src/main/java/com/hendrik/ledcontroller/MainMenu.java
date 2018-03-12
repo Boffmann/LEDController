@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.flask.colorpicker.ColorPickerView;
+import com.flask.colorpicker.OnColorSelectedListener;
 import com.hendrik.ledcontroller.Bluetooth.BTCommand;
 import com.hendrik.ledcontroller.Bluetooth.BTService;
 import com.hendrik.ledcontroller.Bluetooth.BTTransmitProtocol;
@@ -86,13 +88,13 @@ public class MainMenu extends BaseActivity {
         Button offButton = (Button)findViewById(R.id.button_off);
         Button disconnectButton = (Button)findViewById(R.id.button_dissconnect);
         SeekBar brightnessSeekBar = (SeekBar)findViewById(R.id.brightness_seekbar);
+        ColorPickerView colorPicker = (ColorPickerView)findViewById((R.id.color_picker_view));
         final TextView brightnessSeekBarValueView = (TextView)findViewById(R.id.brightness_seekbar_value);
         brightnessSeekBarValueView.setText(String.valueOf(brightnessSeekBar.getProgress())+"%");
 
         onButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                byte[] on = {0x6F, 0x6E};
                 BTService.write(new BTCommand(BTTransmitProtocol.ActionType.ON, 1));
             }
         });
@@ -100,7 +102,6 @@ public class MainMenu extends BaseActivity {
         offButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                byte[] off = {0x6F, 0x66, 0x66};
                 BTService.write(new BTCommand(BTTransmitProtocol.ActionType.OFF, 1));
             }
         });
@@ -118,6 +119,14 @@ public class MainMenu extends BaseActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                BTService.write(new BTCommand(BTTransmitProtocol.ActionType.BRIGHTNESS, seekBar.getProgress()));
+            }
+        });
+
+        colorPicker.addOnColorSelectedListener(new OnColorSelectedListener() {
+            @Override
+            public void onColorSelected(int selectedColor) {
+                BTService.write(new BTCommand(BTTransmitProtocol.ActionType.COLOR, selectedColor));
             }
         });
 

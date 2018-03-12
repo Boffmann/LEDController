@@ -9,7 +9,8 @@ public class BTTransmitProtocol {
     public enum ActionType {
         ON,
         OFF,
-        BRIGHTNESS;
+        BRIGHTNESS,
+        COLOR;
 
         public static int toAscii(final ActionType type) {
             switch (type) {
@@ -19,6 +20,8 @@ public class BTTransmitProtocol {
                     return 49;
                 case BRIGHTNESS:
                     return 50;
+                case COLOR:
+                    return 51;
                 default:
                     return 0;
             }
