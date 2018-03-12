@@ -2,6 +2,9 @@ package com.hendrik.ledcontroller.Bluetooth;
 
 import android.util.Log;
 
+import com.hendrik.ledcontroller.Bluetooth.Command.BTCommand;
+import com.hendrik.ledcontroller.Bluetooth.Command.BTUnaryCommand;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;

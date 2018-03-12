@@ -6,8 +6,10 @@ import android.bluetooth.BluetoothSocket;
 import android.os.ParcelUuid;
 import android.util.Log;
 
+import com.hendrik.ledcontroller.Bluetooth.Command.BTCommand;
+import com.hendrik.ledcontroller.Bluetooth.Command.BTUnaryCommand;
+
 import java.io.IOException;
-import java.util.Map;
 import java.util.UUID;
 
 /**

@@ -4,29 +4,21 @@ import android.app.AlertDialog;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
-import android.os.ParcelUuid;
 import android.util.Log;
 
 import com.hendrik.ledcontroller.BTApplication;
+import com.hendrik.ledcontroller.Bluetooth.Command.BTCommand;
+import com.hendrik.ledcontroller.Bluetooth.Command.BTUnaryCommand;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * Service running in the background and providing bluetooth functionality
