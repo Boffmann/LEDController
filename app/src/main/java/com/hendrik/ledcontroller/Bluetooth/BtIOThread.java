@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
 /**
- * Created by hendr on 08.03.2018.
+ * Created by hendrik tjabben on 08.03.2018.
  */
 
 public class BtIOThread extends Thread {
@@ -21,7 +21,7 @@ public class BtIOThread extends Thread {
     /** Time to wait until assume timeout */
     private final long mBluetoothTimeoutValueMilliSeconds = 5000;
 
-    private final int mTimesToRetryToSend = 3;
+    private final int mTimesToRetryToSend = 1;
 
     /** List to store all bluetooth commands in */
     private ArrayList<BTCommand> mCommandList;
@@ -124,28 +124,52 @@ public class BtIOThread extends Thread {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    try {
-                        mSemaphore.acquire();
-                        for (int i = 0; i < mCommandList.size(); i++) {
-                            write(BTSerializer.serialize(mCommandList.get(i)));
-                            Log.e(TAG, "Write: " + mCommandList.get(i).toString());
-                            // TODO Add mechanism to check if command was transmitted correctly. Transmit next command after receive notification occurs
-                            ReceiveAnswer answer = waitForReceiveConfirmation(mCommandList.get(i));
-                            if (answer == ReceiveAnswer.SUCCESS) {
+                }
+                try {
+                    mSemaphore.acquire();
+                    for (int i = 0; i < mCommandList.size(); i++) {
+                        boolean writeSuccess = writeDataStream(BTSerializer.serialize(mCommandList.get(i)), mCommandList.get(i));
+
+                        if (!writeSuccess) {
+                            Log.e(TAG, "Write not succeeded");
+                            if (timesRetryToSend >= mTimesToRetryToSend) {
+                                Log.e(TAG, "Failed to write data to serial port after " + timesRetryToSend + " retries");
                                 mCommandList.remove(i);
-                            } else if(answer == ReceiveAnswer.FAILURE) {
-                                Log.e(TAG, "Failure receiving confirmation");
-                            } else if (answer == ReceiveAnswer.TIMEOUT) {
-                                Log.e(TAG, "Timeout receiving answer");
-                            } else {
-                                Log.e(TAG, "Something went wrong while receiving data");
+                                timesRetryToSend = 0;
+                                continue;
                             }
+                            timesRetryToSend++;
+                            continue;
                         }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } finally {
-                        mSemaphore.release();
+
+                        Log.e(TAG, "Write: " + mCommandList.get(i).toString());
+                        ReceiveAnswer answer = waitForReceiveConfirmation(mCommandList.get(i));
+                        if (answer == ReceiveAnswer.SUCCESS) {
+                            mCommandList.remove(i);
+                        } else if(answer == ReceiveAnswer.FAILURE) {
+                            Log.e(TAG, "Failure receiving confirmation");
+                            if (timesRetryToSend >= mTimesToRetryToSend) {
+                                mCommandList.remove(i);
+                                timesRetryToSend = 0;
+                                // TODO Inform user
+                            }
+                            timesRetryToSend++;
+                        } else if (answer == ReceiveAnswer.TIMEOUT) {
+                            Log.e(TAG, "Timeout receiving answer");
+                            if (timesRetryToSend >= mTimesToRetryToSend) {
+                                mCommandList.remove(i);
+                                timesRetryToSend = 0;
+                                // TODO Inform user
+                            }
+                            timesRetryToSend++;
+                        } else {
+                            Log.e(TAG, "Something went wrong while receiving data");
+                        }
                     }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                    mSemaphore.release();
                 }
             }
         }
@@ -167,14 +191,55 @@ public class BtIOThread extends Thread {
         }
     }
 
-    private boolean write(final byte[] data) {
-        try {
-            mOutputStream.write(data);
-        } catch (IOException e) {
-            Log.e(TAG, "Error occurred when sending data", e);
+    /**
+     * Sends byte containing command type to serial port and waits for confirmation.
+     * The other side (Arduino) must know the command type to prepare for size of byte stream
+     * */
+    private boolean confirmCommandType(final BTCommand command) {
+        ReceiveAnswer receiveAnswer = waitForReceiveConfirmation(command);
+
+        if (receiveAnswer == ReceiveAnswer.SUCCESS){
+            return true;
+        } else {
             return false;
         }
+    }
+
+    private boolean writeDataStream(final int[] data, final BTCommand command) {
+        if (data.length < 2) {
+            Log.e(TAG, "To send data is to small");
+            return false;
+        }
+
+        // Write type of command and check if device accepted command
+        String s1 = String.format("%8s", Integer.toBinaryString(data[0] & 0xFF)).replace(' ', '0');
+        Log.w(TAG, "Send command type: " + data[0]);
+        Log.w(TAG, "Binary: " + s1);
+        byte[] metadata = new byte[2];
+        metadata[0] = (byte)data[0];
+        metadata[1] = (byte)data[1];
+        write(metadata);
+        //boolean commandAccepted = confirmCommandType(command);
+        boolean commandAccepted = true;
+        if (!commandAccepted) {
+            Log.e(TAG, "Command not accepted");
+            return false;
+        }
+        byte[] paramData = new byte[data.length - 2];
+        for (int i = 2; i < data.length; i++) {
+            paramData[i-2] = (byte)data[i];
+        }
+        write(paramData);
+
         return true;
+    }
+
+    private void write(final byte[] data) {
+        try {
+            mOutputStream.write(data, 0, data.length);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

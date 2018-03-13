@@ -2,10 +2,8 @@ package com.hendrik.ledcontroller.Bluetooth;
 
 import com.hendrik.ledcontroller.Bluetooth.Command.BTCommand;
 
-import java.util.ArrayList;
-
 /**
- * Created by hendr on 09.03.2018.
+ * Created by hendrik tjabben on 09.03.2018.
  */
 
 public class BTTransmitProtocol {
@@ -24,11 +22,11 @@ public class BTTransmitProtocol {
             case ON:
                 return 0x01;
             case OFF:
-                return 0x02;
-            case BRIGHTNESS:
                 return 0x04;
-            case COLOR:
+            case BRIGHTNESS:
                 return 0x08;
+            case COLOR:
+                return 0x10;
             default:
                 return 0x00;
         }
@@ -71,9 +69,11 @@ public class BTTransmitProtocol {
         byte[] metadata = {0x00, 0x00};
 
         // Set bit flag for every value greater than 127, because somehow most valueable bit is flipped during transmission
-        for (int i = 0; i < command.getValues().size(); i++) {
-            if (command.getValues().get(i) > 127) {
-                metadata[0] |= valueSizeFlags[i];
+        if (command.getValues() != null) {
+            for (int i = 0; i < command.getValues().size(); i++) {
+                if (command.getValues().get(i) > 127) {
+                    metadata[0] |= valueSizeFlags[i];
+                }
             }
         }
 
