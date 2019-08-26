@@ -72,6 +72,7 @@ public class BluetoothConnectionActivity extends BaseActivity {
             }
         }
     };
+
     /** The service connection to talk to the Bluetooth service */
     private ServiceConnection mBTServiceConnection = new ServiceConnection() {
         @Override
@@ -115,10 +116,14 @@ public class BluetoothConnectionActivity extends BaseActivity {
         //BTService.LocalBinder binder = ((BTApplication)getApplicationContext()).acquireBinding();
 
         Log.e(TAG, "OnCreateActivity");
+    }
 
-
+    @Override
+    protected void onStart() {
+        super.onStart();
         Intent bindServiceIntent = new Intent(this, BTService.class);
-        bindService(bindServiceIntent, mBTServiceConnection, BTService.BIND_AUTO_CREATE);
+        boolean tmp = bindService(bindServiceIntent, mBTServiceConnection, BTService.BIND_AUTO_CREATE);
+        int i = 1;
     }
 
     @Override
@@ -150,9 +155,9 @@ public class BluetoothConnectionActivity extends BaseActivity {
      * Setup Device lists with on click listener and ArrayAdapter to render entries to device lists
      * */
     private void setupDeviceLists() {
-        mLvPairedDevices = (ListView) findViewById(R.id.lvPairedDevices);
-        mLvUnpairedDevices = (ListView) findViewById(R.id.lvUnpairedDevices);
-        mLvNearDevices = (ListView) findViewById(R.id.lvNearDevices);
+        mLvPairedDevices = findViewById(R.id.lvPairedDevices);
+        mLvUnpairedDevices = findViewById(R.id.lvUnpairedDevices);
+        mLvNearDevices = findViewById(R.id.lvNearDevices);
 
         mLvPairedDevices.setOnItemClickListener(mOnListItemClicked);
         mLvUnpairedDevices.setOnItemClickListener(mOnListItemClicked);

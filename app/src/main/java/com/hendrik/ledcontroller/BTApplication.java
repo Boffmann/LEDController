@@ -1,13 +1,7 @@
 package com.hendrik.ledcontroller;
 
-import android.app.AlertDialog;
 import android.app.Application;
-import android.bluetooth.BluetoothAdapter;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Handler;
-
-import com.hendrik.ledcontroller.Bluetooth.BTService;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

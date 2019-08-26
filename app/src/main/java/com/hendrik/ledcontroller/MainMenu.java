@@ -14,11 +14,8 @@ import android.widget.TextView;
 
 import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.OnColorSelectedListener;
-import com.hendrik.ledcontroller.Bluetooth.Command.BTBinaryCommand;
-import com.hendrik.ledcontroller.Bluetooth.Command.BTUnaryCommand;
 import com.hendrik.ledcontroller.Bluetooth.BTService;
-import com.hendrik.ledcontroller.Bluetooth.BTTransmitProtocol;
-import com.hendrik.ledcontroller.Bluetooth.Command.BTWidenedCommand;
+import com.hendrik.ledcontroller.Bluetooth.Command.BTPackage;
 
 import java.util.ArrayList;
 
@@ -89,32 +86,32 @@ public class MainMenu extends BaseActivity {
 
         setContentView(R.layout.activity_main_menu);
 
-        Button onButton = (Button)findViewById(R.id.button_on);
-        Button offButton = (Button)findViewById(R.id.button_off);
-        Button disconnectButton = (Button)findViewById(R.id.button_dissconnect);
-        SeekBar brightnessSeekBar = (SeekBar)findViewById(R.id.brightness_seekbar);
-        ColorPickerView colorPicker = (ColorPickerView)findViewById((R.id.color_picker_view));
-        final TextView brightnessSeekBarValueView = (TextView)findViewById(R.id.brightness_seekbar_value);
-        brightnessSeekBarValueView.setText(String.valueOf(brightnessSeekBar.getProgress())+"%");
+        Button onButton = findViewById(R.id.button_on);
+        Button offButton = findViewById(R.id.button_off);
+        Button disconnectButton = findViewById(R.id.button_dissconnect);
+        SeekBar brightnessSeekBar = findViewById(R.id.brightness_seekbar);
+        ColorPickerView colorPicker = findViewById((R.id.color_picker_view));
+        final TextView brightnessSeekBarValueView = findViewById(R.id.brightness_seekbar_value);
+        brightnessSeekBarValueView.setText(brightnessSeekBar.getProgress()+"%");
 
         onButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BTService.write(new BTUnaryCommand(BTTransmitProtocol.ActionType.ON));
+                BTService.write(new BTPackage(BTPackage.PackageType.ONOFF, (byte)1 ));
             }
         });
 
         offButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BTService.write(new BTUnaryCommand(BTTransmitProtocol.ActionType.OFF));
+                BTService.write(new BTPackage(BTPackage.PackageType.ONOFF, (byte)0 ));
             }
         });
 
         brightnessSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                brightnessSeekBarValueView.setText(String.valueOf(seekBar.getProgress())+"%");
+                brightnessSeekBarValueView.setText(seekBar.getProgress()+"%");
             }
 
             @Override
@@ -124,7 +121,7 @@ public class MainMenu extends BaseActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                BTService.write(new BTBinaryCommand(BTTransmitProtocol.ActionType.BRIGHTNESS, seekBar.getProgress()));
+                BTService.write(new BTPackage(BTPackage.PackageType.BRIGHTNESS, (byte) seekBar.getProgress()));
             }
         });
 
@@ -135,7 +132,6 @@ public class MainMenu extends BaseActivity {
                 color.add(0, Color.red(selectedColor));
                 color.add(1, Color.green(selectedColor));
                 color.add(2, Color.blue(selectedColor));
-                BTService.write(new BTWidenedCommand(BTTransmitProtocol.ActionType.COLOR, color));
             }
         });
 
