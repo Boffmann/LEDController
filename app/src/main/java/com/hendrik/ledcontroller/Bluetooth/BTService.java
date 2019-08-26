@@ -89,31 +89,7 @@ public class BTService extends Service {
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        if (mBluetoothAdapter == null) {
-            new AlertDialog.Builder(this)
-                    .setTitle("Not compatible")
-                    .setMessage("Your phone does not support Bluetooth")
-                    .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            System.exit(0);
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-        }
-
-        if (!mBluetoothAdapter.isEnabled()) {
-            Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivity(enableBT);
-        }
-
-        //TODO stopservice
-        /*String stopservice = intent.getStringExtra("stopservice");
-        if (stopservice != null && stopservice.length() > 0) {
-            stopSelf();
-        }*/
         return START_STICKY;
-
     }
 
 //ENDREGION LIFECYCLE
@@ -152,9 +128,7 @@ public class BTService extends Service {
 
         if (pairedDevices.size() > 0) {
             // There are paired devices. Get the name and address of each paired device.
-            for (BluetoothDevice device : pairedDevices) {
-                paired.add(device);
-            }
+            paired.addAll(pairedDevices);
         }
 
         return paired;

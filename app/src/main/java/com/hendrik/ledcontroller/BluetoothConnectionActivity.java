@@ -82,10 +82,7 @@ public class BluetoothConnectionActivity extends BaseActivity {
 
             mBTService = binder.getService();
 
-            ArrayList<BluetoothDevice> temp = mBTService.QueryPairedDevices();
-            for(BluetoothDevice device : temp) {
-                mPairedBTDevices.add(device);
-            }
+            mPairedBTDevices.addAll(mBTService.QueryPairedDevices());
             mPairedDeviceArrayAdapter.notifyDataSetChanged();
         }
 
@@ -119,7 +116,7 @@ public class BluetoothConnectionActivity extends BaseActivity {
 
         Log.e(TAG, "OnCreateActivity");
 
-        //TODO Use acquireBind from Application
+
         Intent bindServiceIntent = new Intent(this, BTService.class);
         bindService(bindServiceIntent, mBTServiceConnection, BTService.BIND_AUTO_CREATE);
     }
@@ -131,7 +128,8 @@ public class BluetoothConnectionActivity extends BaseActivity {
         // Don't forget to unregister the ACTION_FOUND receiver.
         unregisterReceiver(mReceiverUnpairedFound);
         unbindService(mBTServiceConnection);
-        ((BTApplication) getApplication()).stopBTService();
+        Intent intent = new Intent(this, BTService.class);
+        stopService(intent);
     }
 
 //ENDREGION ACTIVITY LIFECYCLE

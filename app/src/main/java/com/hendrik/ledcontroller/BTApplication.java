@@ -1,6 +1,9 @@
 package com.hendrik.ledcontroller;
 
+import android.app.AlertDialog;
 import android.app.Application;
+import android.bluetooth.BluetoothAdapter;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 
@@ -55,23 +58,6 @@ public class BTApplication extends Application {
 //REGION SET/GET
 
     /**
-     * Start the BT Service
-     */
-    private void startBTService() {
-
-        Intent intent = new Intent(this, BTService.class);
-        startService(intent);
-    }
-
-    /**
-     * Stop the BT Service
-     */
-    public void stopBTService() {
-        Intent intent = new Intent(this, BTService.class);
-        stopService(intent);
-    }
-
-    /**
      * Release a BT Binding
      */
     public void releaseBinding() {
@@ -102,7 +88,5 @@ public class BTApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        startBTService();
     }
 }
