@@ -34,15 +34,11 @@
             android:layout_width="360dp"
             android:layout_height="150dp" />
 
-        <TextView
+        <Button
+            android:id="@+id/connect_to_last_button"
+            android:layout_height="150dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Discovered near devices"/>
-
-        <ListView
-            android:id="@+id/lvNearDevices"
-            android:layout_width="360dp"
-            android:layout_height="150dp" />
+            android:text="@string/ConnectToLast"/>
 
     </LinearLayout>
 

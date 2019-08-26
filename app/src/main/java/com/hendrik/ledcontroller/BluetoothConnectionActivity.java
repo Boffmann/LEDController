@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -42,20 +44,14 @@ public class BluetoothConnectionActivity extends BaseActivity {
     private DeviceArrayAdapter mPairedDeviceArrayAdapter;
     /** ArrayAdapter to list unpaired but near devices */
     private DeviceArrayAdapter mUnpairedDeviceArrayAdapter;
-    /** ArrayAdapter to list near devices */
-    private DeviceArrayAdapter mNearDeviceArrayAdapter;
     /** List to list paired devices */
     public ArrayList<BluetoothDevice> mPairedBTDevices = new ArrayList<>();
     /** List to list unpaired devices */
     public ArrayList<BluetoothDevice> mUnpairedBTDevices = new ArrayList<>();
-    /** List to list near devices */
-    public ArrayList<BluetoothDevice> mNearBTDevices = new ArrayList<>();
     /** List view to show all paired devices */
     ListView mLvPairedDevices;
     /** List view to show all unpaired devices */
     ListView mLvUnpairedDevices;
-    /** List view to show all near devices */
-    ListView mLvNearDevices;
     /** The BTService */
     private BTService mBTService = null;
     /** Create a BroadcastReceiver for ACTION_FOUND. Bluetooth*/
@@ -100,6 +96,10 @@ public class BluetoothConnectionActivity extends BaseActivity {
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             BluetoothDevice selectedDevice = (BluetoothDevice) adapterView.getItemAtPosition(i);
             if (mBTService.connectToDevice(selectedDevice)) {
+                SharedPreferences sharedPref= getSharedPreferences("BTSettings", 0);
+                SharedPreferences.Editor editor= sharedPref.edit();
+                editor.putString("mac_address", selectedDevice.getAddress());
+                editor.apply();
                 startMainMenuActivity();
             } else {
                 Toast toast = Toast.makeText(getApplicationContext(), "Failed to connect to device", Toast.LENGTH_LONG);
@@ -170,24 +170,18 @@ public class BluetoothConnectionActivity extends BaseActivity {
     private void setupDeviceLists() {
         mLvPairedDevices = findViewById(R.id.lvPairedDevices);
         mLvUnpairedDevices = findViewById(R.id.lvUnpairedDevices);
-        mLvNearDevices = findViewById(R.id.lvNearDevices);
 
         mLvPairedDevices.setOnItemClickListener(mOnListItemClicked);
         mLvUnpairedDevices.setOnItemClickListener(mOnListItemClicked);
-        mLvNearDevices.setOnItemClickListener(mOnListItemClicked);
 
         mPairedBTDevices = new ArrayList<>();
         mUnpairedBTDevices = new ArrayList<>();
-        mNearBTDevices = new ArrayList<>();
 
         mPairedDeviceArrayAdapter = new DeviceArrayAdapter(getApplicationContext(), R.layout.device_adapter_view, mPairedBTDevices);
         mLvPairedDevices.setAdapter(mPairedDeviceArrayAdapter);
 
         mUnpairedDeviceArrayAdapter = new DeviceArrayAdapter(getApplicationContext(), R.layout.device_adapter_view, mUnpairedBTDevices);
         mLvUnpairedDevices.setAdapter(mUnpairedDeviceArrayAdapter);
-
-        mNearDeviceArrayAdapter = new DeviceArrayAdapter(getApplicationContext(), R.layout.device_adapter_view, mNearBTDevices);
-        mLvNearDevices.setAdapter(mNearDeviceArrayAdapter);
     }
 
     /**
@@ -204,6 +198,23 @@ public class BluetoothConnectionActivity extends BaseActivity {
                 mBTService.BTDiscovery();
             }
         });
+
+        final Button connectToLastButton = (Button) findViewById(R.id.connect_to_last_button);
+
+        SharedPreferences sharedPref= getSharedPreferences("BTSettings", 0);
+        final String macAddress = sharedPref.getString("mac_address", "");
+        if (macAddress != null && macAddress != "") {
+            connectToLastButton.setBackgroundColor(Color.GREEN); // Green
+            connectToLastButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    mBTService.connectToDevice(macAddress);
+                    startMainMenuActivity();
+                }
+            });
+        } else {
+            connectToLastButton.setBackgroundColor(Color.GRAY);
+            connectToLastButton.setClickable(false);
+        }
 
     }
 

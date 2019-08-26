@@ -240,7 +240,10 @@ public class BTService extends Service {
         return this.connect(bluetoothDevice);
     }
 
-    private static Object obj = new Object();
+    public boolean connectToDevice(final String macAddress) {
+        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(macAddress);
+        return this.connectToDevice(device);
+    }
 
     /**
      * Write a byte stream to the connected BT Device
