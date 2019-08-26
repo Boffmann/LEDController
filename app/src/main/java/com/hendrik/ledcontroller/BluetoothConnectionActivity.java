@@ -93,6 +93,7 @@ public class BluetoothConnectionActivity extends BaseActivity {
             mBTService = null;
         }
     };
+
     /** Listener to handle action when clicked on device in list entry */
     private AdapterView.OnItemClickListener mOnListItemClicked = new AdapterView.OnItemClickListener() {
         @Override
@@ -142,6 +143,12 @@ public class BluetoothConnectionActivity extends BaseActivity {
         Intent intent = new Intent(this, BTService.class);
         stopService(intent);
     }
+
+    @Override
+    public void onBackPressed() {
+        // Disable back button
+    }
+
 
 //ENDREGION ACTIVITY LIFECYCLE
 

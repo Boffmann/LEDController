@@ -171,7 +171,8 @@ public class BTService extends Service {
     public boolean connect(final BluetoothDevice btDevice) {
 
 
-        // TODO Cancel any thread currently running a connection
+        // Reset all streams and socket.
+        this.cancelConnection();
 
         UUID uuid = null;
         try {
@@ -227,10 +228,6 @@ public class BTService extends Service {
         return true;
     }
 
-    public boolean disconnect() {
-        return true;
-    }
-
     /**
      * Connect to a certain bluetooth device
      * @param bluetoothDevice the device to connect to
@@ -265,7 +262,20 @@ public class BTService extends Service {
      * Cancels the BT connection
      */
     public void cancelConnection() {
-        this.disconnect();
+        if (mInputStream != null) {
+            try {mInputStream.close();} catch (Exception e) {}
+            mInputStream = null;
+        }
+
+        if (mOutputStream != null) {
+            try {mOutputStream.close();} catch (Exception e) {}
+            mOutputStream = null;
+        }
+
+        if (mBluetoothSocket != null) {
+            try {mBluetoothSocket.close();} catch (Exception e) {}
+            mBluetoothSocket = null;
+        }
     }
 
 

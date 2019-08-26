@@ -75,6 +75,11 @@ public class MainMenu extends BaseActivity {
         unbindService(mBTServiceConnection);
     }
 
+    @Override
+    public void onBackPressed() {
+        // Disable back button
+    }
+
 //ENDREGION ACTIVITY LIFECYCLE
 
 //REGION INIT
