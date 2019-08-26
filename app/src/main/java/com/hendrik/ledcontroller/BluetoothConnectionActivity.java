@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.hendrik.ledcontroller.Bluetooth.BTService;
 import com.hendrik.ledcontroller.DataStructure.DeviceArrayAdapter;
@@ -97,8 +98,13 @@ public class BluetoothConnectionActivity extends BaseActivity {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             BluetoothDevice selectedDevice = (BluetoothDevice) adapterView.getItemAtPosition(i);
-            connect(selectedDevice);
-            startMainMenuActivity();
+            if (mBTService.connectToDevice(selectedDevice)) {
+                startMainMenuActivity();
+            } else {
+                Toast toast = Toast.makeText(getApplicationContext(), "Failed to connect to device", Toast.LENGTH_LONG);
+                toast.show();
+
+            }
         }
     };
 
@@ -203,19 +209,4 @@ public class BluetoothConnectionActivity extends BaseActivity {
         Intent intent = new Intent(this, MainMenu.class);
         startActivity(intent);
     }
-
-
-
-//REGION BLUETOOTH
-
-    /**
-     * Connect to a selected Device
-     * @param bluetoothDevice the BTDevice to connect to
-     */
-    private void connect(final BluetoothDevice bluetoothDevice) {
-        mBTService.connectToDevice(bluetoothDevice);
-    }
-
-//ENDREGION BLUETOOTH
-
 }

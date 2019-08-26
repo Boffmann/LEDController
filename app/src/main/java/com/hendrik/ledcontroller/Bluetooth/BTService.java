@@ -166,10 +166,9 @@ public class BTService extends Service {
     /**
      * Create a connection to a bluetooth device
      * @param btDevice The Bluetooth device to connect to
-     * @param btAdapter The bluetooth adapter of the device that initiates the connection
      * @return
      */
-    public boolean connect(final BluetoothDevice btDevice, final BluetoothAdapter btAdapter) {
+    public boolean connect(final BluetoothDevice btDevice) {
 
 
         // TODO Cancel any thread currently running a connection
@@ -192,7 +191,7 @@ public class BTService extends Service {
         }
 
         // Cancel discovery because it otherwise slows down the connection.
-        btAdapter.cancelDiscovery();
+        mBluetoothAdapter.cancelDiscovery();
 
         try {
             // Connect to the remote device through the socket. This call blocks
@@ -236,15 +235,12 @@ public class BTService extends Service {
      * Connect to a certain bluetooth device
      * @param bluetoothDevice the device to connect to
      */
-    public void connectToDevice(final BluetoothDevice bluetoothDevice) {
+    public boolean connectToDevice(final BluetoothDevice bluetoothDevice) {
         if (mBluetoothAdapter.isDiscovering()){
             // Cancel discovery just to make sure. Discovering is a resource consuming process
             mBluetoothAdapter.cancelDiscovery();
         }
-        if (this.connect(bluetoothDevice, mBluetoothAdapter)) {
-            // TODO Handle failed connection
-            return;
-        }
+        return this.connect(bluetoothDevice);
     }
 
     private static Object obj = new Object();
