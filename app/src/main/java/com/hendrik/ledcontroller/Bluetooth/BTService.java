@@ -51,7 +51,7 @@ public class BTService extends Service {
     /** Output stream to write data over bluetooth */
     private static OutputStream mOutputStream;
     /** Input stream to receive data over bluetooth */
-    private InputStream mInputStream;
+    private static InputStream mInputStream;
     /** handler that gets info from Bluetooth service */
     private Handler mHandler;
     /** The connection state */
@@ -245,19 +245,47 @@ public class BTService extends Service {
         return this.connectToDevice(device);
     }
 
-    /**
-     * Write a byte stream to the connected BT Device
-     * @param command The unserialized command to transmit to the BTDevice
-     */
-    public static void write(final BTPackage command) {
+    public static void write(final BTPackage command, final int retries) {
         byte[] data = command.getData();
         for (int i = 0; i < data.length; i++) {
             System.out.println(data[i]);
         }
         try {
             mOutputStream.write(data, 0, data.length);
+            byte[] readData = read();
+            while (readData == null) {
+                readData = read();
+            }
+            if (readData[0] == 0) {
+                if (retries < 3) {
+                    write(command, retries + 1);
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Write a byte stream to the connected BT Device
+     * @param command The unserialized command to transmit to the BTDevice
+     */
+    public static void write(final BTPackage command) {
+        write(command, 0);
+    }
+
+    public static byte[] read() {
+        byte[] inputBuffer = new byte[1];
+        try {
+            int numBytes = mInputStream.read(inputBuffer);
+            if (numBytes > 0) {
+                return inputBuffer;
+            } else {
+                return null;
+            }
+        } catch (IOException e) {
+            Log.d(TAG, "Input stream was disconnected", e);
+            return null;
         }
     }
 

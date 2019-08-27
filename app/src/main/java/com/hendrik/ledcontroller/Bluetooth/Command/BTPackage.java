@@ -37,19 +37,41 @@ public class BTPackage {
         }
     }
 
+    /**
+     * Convert the data into the Bluetooth protocol
+     * Field 0: Start Byte (55)
+     * Field 1: Type
+     * Field 2: Data Field 1
+     * Field 3: Data Field 2
+     * Field 4: Data Field 3
+     * Field 5: Checksum (Sum of all fields except start and stop)
+     * Field 6: End Byte (54)
+     * Pays attention that no other bytes than start and stop byte are 55/54.
+     * Is implemented on Arduino side in the same way
+     * @return
+     */
     public byte[] getData() {
-        byte[] result = new byte[5];
+        byte[] result = new byte[7];
 
-        result [0] = mType;
+        result[0] = 55;
+        result [1] = mType;
         for (int i = 0; i < mData.length; i++) {
-            result[1+i] = mData[i];
+            byte dataValue = mData[i];
+            if (dataValue == 54 || dataValue == 55) {
+                dataValue = 56;
+            }
+            result[2+i] = dataValue;
         }
 
         int sum = 0;
-        for (byte data : result) {
-            sum = sum + data;
+        for (int i = 1; i < result.length; i++) {
+            sum = sum + result[i];
         }
-        result[4] = (byte)sum;
+        if (sum == 54 || sum == 55) {
+            sum = 56;
+        }
+        result[5] = (byte)sum;
+        result[6] = 54;
 
         return result;
     }
