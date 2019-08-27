@@ -133,10 +133,11 @@ public class MainMenu extends BaseActivity {
         colorPicker.addOnColorSelectedListener(new OnColorSelectedListener() {
             @Override
             public void onColorSelected(int selectedColor) {
-                ArrayList<Integer> color = new ArrayList<>();
-                color.add(0, Color.red(selectedColor));
-                color.add(1, Color.green(selectedColor));
-                color.add(2, Color.blue(selectedColor));
+                byte color[] = new byte[3];
+                color[0] = (byte)Color.red(selectedColor);
+                color[1] = (byte)Color.green(selectedColor);
+                color[2] = (byte)Color.blue(selectedColor);
+                BTService.write(new BTPackage(BTPackage.PackageType.COLOR, color));
             }
         });
 

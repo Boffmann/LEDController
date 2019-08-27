@@ -256,8 +256,10 @@ public class BTService extends Service {
             while (readData == null) {
                 readData = read();
             }
+            readData[0] = (byte)(readData[0] - 48);
+            System.out.println("ReadData;: " + readData[0]);
             if (readData[0] == 0) {
-                if (retries < 3) {
+                if (retries < 2) {
                     write(command, retries + 1);
                 }
             }
