@@ -75,7 +75,6 @@ public class MainMenu extends BaseBTActivity {
         Button offButton = findViewById(R.id.button_off);
         Button disconnectButton = findViewById(R.id.button_dissconnect);
         SeekBar brightnessSeekBar = findViewById(R.id.brightness_seekbar);
-        //ColorPickerView colorPicker = findViewById((R.id.color_picker_view));
         final TextView brightnessSeekBarValueView = findViewById(R.id.brightness_seekbar_value);
         brightnessSeekBarValueView.setText(brightnessSeekBar.getProgress()+"%");
 
@@ -109,17 +108,6 @@ public class MainMenu extends BaseBTActivity {
                 BTService.write(new BTPackage(BTPackage.PackageType.BRIGHTNESS, (byte) seekBar.getProgress()));
             }
         });
-
-        /*colorPicker.addOnColorSelectedListener(new OnColorSelectedListener() {
-            @Override
-            public void onColorSelected(int selectedColor) {
-                byte color[] = new byte[3];
-                color[0] = (byte)Color.red(selectedColor);
-                color[1] = (byte)Color.green(selectedColor);
-                color[2] = (byte)Color.blue(selectedColor);
-                BTService.write(new BTPackage(BTPackage.PackageType.COLOR, color));
-            }
-        });*/
 
         disconnectButton.setOnClickListener(new View.OnClickListener() {
             @Override
