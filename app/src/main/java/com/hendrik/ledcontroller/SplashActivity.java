@@ -5,13 +5,14 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import com.hendrik.ledcontroller.Bluetooth.BTService;
 
 /**
  * Activity to make initial checks
  */
-public class SplashActivity extends BaseActivity {
+public class SplashActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_ENABLE_BT = 1;
 

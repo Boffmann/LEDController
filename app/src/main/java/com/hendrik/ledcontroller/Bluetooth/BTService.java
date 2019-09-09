@@ -252,17 +252,6 @@ public class BTService extends Service {
         }
         try {
             mOutputStream.write(data, 0, data.length);
-            byte[] readData = read();
-            while (readData == null) {
-                readData = read();
-            }
-            readData[0] = (byte)(readData[0] - 48);
-            System.out.println("ReadData;: " + readData[0]);
-            if (readData[0] == 0) {
-                if (retries < 2) {
-                    write(command, retries + 1);
-                }
-            }
         } catch (IOException e) {
             e.printStackTrace();
         }

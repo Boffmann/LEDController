@@ -1,77 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.hendrik.ledcontroller.MainMenu">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="368dp"
-        android:layout_height="495dp"
-        tools:layout_editor_absoluteY="8dp"
-        tools:layout_editor_absoluteX="8dp"
-        android:orientation="vertical">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/button_on"
-            android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:text="on"/>
+            android:layout_height="60dp"
+            android:layout_weight=".35"
+            android:layout_marginRight="2dp"
+            android:layout_marginLeft="2dp"
+            android:text="@string/ON" />
 
         <Button
             android:id="@+id/button_off"
-            android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:text="off"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Helligkeit"/>
-
-        <SeekBar
-            android:id="@+id/brightness_seekbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="100"/>
-
-        <TextView
-            android:id="@+id/brightness_seekbar_value"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <Button
-            android:id="@+id/button_dissconnect"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:textColor="@android:color/holo_red_dark"
-            android:text="@string/DisconnectButton"/>
-
-        <com.flask.colorpicker.ColorPickerView
-            android:id="@+id/color_picker_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:alphaSlider="true"
-            app:density="12"
-            app:lightnessSlider="true"
-            app:wheelType="FLOWER"
-            app:lightnessSliderView="@+id/v_lightness_slider"
-            app:alphaSliderView="@+id/v_alpha_slider"
-            />
-
-        <com.flask.colorpicker.slider.LightnessSlider
-            android:id="@+id/v_lightness_slider"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            />
-
-        <com.flask.colorpicker.slider.AlphaSlider
-            android:id="@+id/v_alpha_slider"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            />
+            android:layout_height="60dp"
+            android:layout_weight=".35"
+            android:layout_marginRight="2dp"
+            android:layout_marginLeft="2dp"
+            android:text="@string/OFF" />
 
     </LinearLayout>
 
-</android.support.constraint.ConstraintLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textSize="12pt"
+        android:text="@string/Brightness"/>
+
+     <SeekBar
+        android:id="@+id/brightness_seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:max="100"/>
+
+    <TextView
+        android:id="@+id/brightness_seekbar_value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15pt"
+        android:layout_marginTop="10dp"/>
+
+    <include
+        layout="@layout/color_picker"
+        android:id="@+id/includedLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="60dp"/>
+
+    <Button
+        android:id="@+id/button_dissconnect"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:textColor="@android:color/holo_red_dark"
+        android:text="@string/DisconnectButton"/>
+
+    <!--<com.flask.colorpicker.ColorPickerView
+        android:id="@+id/color_picker_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:alphaSlider="true"
+        app:density="12"
+        app:lightnessSlider="true"
+        app:wheelType="FLOWER"
+        app:lightnessSliderView="@+id/v_lightness_slider"
+        app:alphaSliderView="@+id/v_alpha_slider"
+        />
+
+    <com.flask.colorpicker.slider.LightnessSlider
+        android:id="@+id/v_lightness_slider"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        />
+
+    <com.flask.colorpicker.slider.AlphaSlider
+        android:id="@+id/v_alpha_slider"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        /> -->
+
+</LinearLayout>

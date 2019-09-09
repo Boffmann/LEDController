@@ -1,26 +1,23 @@
 package com.hendrik.ledcontroller;
 
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.flask.colorpicker.ColorPickerView;
-import com.flask.colorpicker.OnColorSelectedListener;
 import com.hendrik.ledcontroller.Bluetooth.BTService;
 import com.hendrik.ledcontroller.Bluetooth.Command.BTPackage;
 
-import java.util.ArrayList;
+import java.io.Console;
 
 
-public class MainMenu extends BaseActivity {
+public class MainMenu extends BaseBTActivity {
 
 //CONSTANTS
 
@@ -31,27 +28,10 @@ public class MainMenu extends BaseActivity {
 
 //MEMBER
 
-
-    /** The BTService */
-    private BTService mBTService = null;
-
-    /** The service connection to talk to the Bluetooth service */
-    private ServiceConnection mBTServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            Log.e(TAG, "OnServiceConnected");
-
-            BTService.LocalBinder binder = (BTService.LocalBinder)iBinder;
-
-            mBTService = binder.getService();
-
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            mBTService = null;
-        }
-    };
+    @Override
+    protected void onBTConnected() {
+        // DO nothing
+    }
 
 //ENDMEMBER
 
@@ -95,7 +75,7 @@ public class MainMenu extends BaseActivity {
         Button offButton = findViewById(R.id.button_off);
         Button disconnectButton = findViewById(R.id.button_dissconnect);
         SeekBar brightnessSeekBar = findViewById(R.id.brightness_seekbar);
-        ColorPickerView colorPicker = findViewById((R.id.color_picker_view));
+        //ColorPickerView colorPicker = findViewById((R.id.color_picker_view));
         final TextView brightnessSeekBarValueView = findViewById(R.id.brightness_seekbar_value);
         brightnessSeekBarValueView.setText(brightnessSeekBar.getProgress()+"%");
 
@@ -130,7 +110,7 @@ public class MainMenu extends BaseActivity {
             }
         });
 
-        colorPicker.addOnColorSelectedListener(new OnColorSelectedListener() {
+        /*colorPicker.addOnColorSelectedListener(new OnColorSelectedListener() {
             @Override
             public void onColorSelected(int selectedColor) {
                 byte color[] = new byte[3];
@@ -139,11 +119,12 @@ public class MainMenu extends BaseActivity {
                 color[2] = (byte)Color.blue(selectedColor);
                 BTService.write(new BTPackage(BTPackage.PackageType.COLOR, color));
             }
-        });
+        });*/
 
         disconnectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                BTService.write(new BTPackage(BTPackage.PackageType.ONOFF, (byte)0));
                 mBTService.cancelConnection();
                 startBTConnectionActivity();
             }
@@ -151,6 +132,18 @@ public class MainMenu extends BaseActivity {
     }
 
 //ENDREGION INIT
+
+    public void onColorButtonClicked(View v) {
+        Drawable background = v.getBackground();
+        if (background instanceof ColorDrawable) {
+            int selectedColor = ((ColorDrawable) background).getColor();
+            byte color[] = new byte[3];
+            color[0] = (byte) Color.red(selectedColor);
+            color[1] = (byte) Color.green(selectedColor);
+            color[2] = (byte) Color.blue(selectedColor);
+            BTService.write(new BTPackage(BTPackage.PackageType.COLOR, color));
+        }
+    }
 
     /**
      * Starts the BluetoothConnectionActivity

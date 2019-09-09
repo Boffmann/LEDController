@@ -1,6 +1,21 @@
 <resources>
     <string name="app_name">LEDController</string>
     <string name="SearchDevice">Search Devices</string>
+
+    <!-- Main Menu -->
     <string name="DisconnectButton">Disconnect</string>
-    <string name="ConnectToLast">Connect to last device</string>
+    <string name="ON">ON</string>
+    <string name="OFF">OFF</string>
+    <string name="Brightness">Brightness</string>
+
+    <!-- BluetoothConnectionActivity -->
+    <string name="ChangeSavedDevice">+</string>
+    <string name="ConnectToLast">Connect to %1$s!</string>
+    <string name="SavedDeviceNotFound">The saved device could not be found</string>
+    <string name="NoDeviceSaved">No device saved</string>
+
+    <!-- Add Device Activity -->
+    <string name="DeviceSetToSaved">Device set to saved</string>
+    <string name="PairedDevicesList">Paired devices</string>
+    <string name="DiscoverUnpairedDevices">Discovered unpaired devices</string>
 </resources>
