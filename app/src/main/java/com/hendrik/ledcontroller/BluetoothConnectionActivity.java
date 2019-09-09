@@ -110,7 +110,7 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
                         if (mBTService.connectToDevice(macAddress)) {
                             startMainMenuActivity();
                         } else {
-                            Toast toast = Toast.makeText(getApplicationContext(), "Failed to connect to device", Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.FailedToConnect), Toast.LENGTH_LONG);
                             toast.show();
                         }
                     }
