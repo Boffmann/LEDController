@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -14,7 +13,6 @@ import android.widget.TextView;
 import com.hendrik.ledcontroller.Bluetooth.BTService;
 import com.hendrik.ledcontroller.Bluetooth.Command.BTPackage;
 
-import java.io.Console;
 
 
 public class MainMenu extends BaseBTActivity {

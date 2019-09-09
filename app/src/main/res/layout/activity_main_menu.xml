@@ -36,12 +36,13 @@
         android:textSize="12pt"
         android:text="@string/Brightness"/>
 
-     <SeekBar
+    <SeekBar
         android:id="@+id/brightness_seekbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:max="100"/>
+        android:max="100"
+        android:progress="100"/>
 
     <TextView
         android:id="@+id/brightness_seekbar_value"
