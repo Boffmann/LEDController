@@ -1,12 +1,10 @@
 package com.hendrik.ledcontroller.Bluetooth;
 
-import android.app.AlertDialog;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Build;
@@ -46,8 +44,6 @@ public class BTService extends Service {
 
     /** The devices bluetooth adapter */
     private static BluetoothAdapter mBluetoothAdapter = null;
-    /** Socket of the established connection */
-    private BluetoothSocket mBluetoothSocket;
     /** Output stream to write data over bluetooth */
     private static OutputStream mOutputStream;
     /** Input stream to receive data over bluetooth */
@@ -58,6 +54,8 @@ public class BTService extends Service {
     public static int mState = STATE_NONE;
     /** BT Binder */
     private final Binder mBinder = new LocalBinder();
+    /** Connect Thread */
+    private ConnectThread mConnectThread = null;
 
 
 //ENDREGION MEMBER
@@ -168,81 +166,47 @@ public class BTService extends Service {
      * @param btDevice The Bluetooth device to connect to
      * @return
      */
-    public boolean connect(final BluetoothDevice btDevice) {
-
+    public void connect(final BluetoothDevice btDevice, final OnConnected connectCallback) {
 
         // Reset all streams and socket.
         this.cancelConnection();
 
-        UUID uuid = null;
-        try {
-            // Fetch possible uuids
-            ParcelUuid[] uuids = btDevice.getUuids();
-            if (uuids != null && uuids.length > 0) {
-                uuid = UUID.fromString(uuids[0].toString());
-            } else {
-                Log.w(TAG, "No uuid possible. Use random uuid");
-                uuid = UUID.randomUUID();
-            }
-            mBluetoothSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
-        } catch (IOException e) {
-            mBluetoothSocket = null;
-            Log.e(TAG, "Failed to establish connection", e);
-            return false;
-        }
-
-        // Cancel discovery because it otherwise slows down the connection.
-        mBluetoothAdapter.cancelDiscovery();
-
-        try {
-            // Connect to the remote device through the socket. This call blocks
-            // until it succeeds or throws an exception.
-            mBluetoothSocket.connect();
-            mOutputStream = mBluetoothSocket.getOutputStream();
-            mInputStream = mBluetoothSocket.getInputStream();
-        } catch (IOException e) {
-            Log.e(TAG, "Unable to connect; close the socket and return. " + e.getMessage());
-            try {
-                Log.e("","trying fallback...");
-
-                mBluetoothSocket =(BluetoothSocket) btDevice.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(btDevice,1);
-                mBluetoothSocket.connect();
-                mOutputStream = mBluetoothSocket.getOutputStream();
-                mInputStream = mBluetoothSocket.getInputStream();
-
-                Log.e("","Connected");
-            }
-            catch (Exception e2) {
-                Log.e("", "Couldn't establish Bluetooth connection!");
+        mConnectThread = new ConnectThread(btDevice, new ManageConnectedSocket() {
+            @Override
+            public void manage(BluetoothSocket bluetoothSocket) {
                 try {
-                    mBluetoothSocket.close();
-                } catch (IOException ex) {
-                    Log.e(TAG, "Could not close the client socket", ex);
+                    mOutputStream = bluetoothSocket.getOutputStream();
+                    mInputStream = bluetoothSocket.getInputStream();
+                    connectCallback.onConnected(true);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    connectCallback.onConnected(false);
                 }
-
-                mBluetoothSocket = null;
-                return false;
             }
-        }
+            @Override
+            public void onFailure() {
+                connectCallback.onConnected(false);
+            }
+        });
 
-        return true;
+        mConnectThread.start();
     }
 
     /**
      * Connect to a certain bluetooth device
      * @param bluetoothDevice the device to connect to
      */
-    public boolean connectToDevice(final BluetoothDevice bluetoothDevice) {
+    public void connectToDevice(final BluetoothDevice bluetoothDevice, final OnConnected onConnected) {
         if (mBluetoothAdapter.isDiscovering()){
             // Cancel discovery just to make sure. Discovering is a resource consuming process
             mBluetoothAdapter.cancelDiscovery();
         }
-        return this.connect(bluetoothDevice);
+        this.connect(bluetoothDevice, onConnected);
     }
 
-    public boolean connectToDevice(final String macAddress) {
+    public void connectToDevice(final String macAddress, final OnConnected onConnected) {
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(macAddress);
-        return this.connectToDevice(device);
+        this.connectToDevice(device, onConnected);
     }
 
     public static void write(final BTPackage command, final int retries) {
@@ -294,9 +258,8 @@ public class BTService extends Service {
             mOutputStream = null;
         }
 
-        if (mBluetoothSocket != null) {
-            try {mBluetoothSocket.close();} catch (Exception e) {}
-            mBluetoothSocket = null;
+        if (mConnectThread != null) {
+            mConnectThread.cancel();
         }
     }
 
@@ -325,6 +288,95 @@ public class BTService extends Service {
 
 
 //REGION CLASSES
+
+    private class ConnectThread extends Thread {
+        private BluetoothSocket mBluetoothSocket;
+        private final BluetoothDevice mDevice;
+        private final ManageConnectedSocket mManageConnectedSocket;
+
+        public ConnectThread(BluetoothDevice btDevice, final ManageConnectedSocket manageConnectedSocket) {
+            // Use a temporary object that is later assigned to mmSocket
+            // because mmSocket is final.
+            BluetoothSocket tmp = null;
+            mDevice = btDevice;
+            mManageConnectedSocket = manageConnectedSocket;
+
+            UUID uuid = null;
+            try {
+                ParcelUuid[] uuids = btDevice.getUuids();
+                // Get a BluetoothSocket to connect with the given BluetoothDevice.
+                // MY_UUID is the app's UUID string, also used in the server code.
+                if (uuids != null && uuids.length > 0) {
+                    uuid = UUID.fromString(uuids[0].toString());
+                } else {
+                    Log.w(TAG, "No uuid possible. Use random uuid");
+                    uuid = UUID.randomUUID();
+                }
+                tmp = btDevice.createRfcommSocketToServiceRecord(uuid);
+            } catch (IOException e) {
+                Log.e(TAG, "Socket's create() method failed", e);
+                manageConnectedSocket.onFailure();
+                return;
+            }
+            mBluetoothSocket = tmp;
+        }
+
+        public void run() {
+            // Cancel discovery because it otherwise slows down the connection.
+            mBluetoothAdapter.cancelDiscovery();
+
+            try {
+                // Connect to the remote device through the socket. This call blocks
+                // until it succeeds or throws an exception.
+                mBluetoothSocket.connect();
+            } catch (IOException e) {
+                Log.e(TAG, "Unable to connect; close the socket and return. " + e.getMessage());
+                // Unable to connect; close the socket and return.
+                try {
+                    Log.e("","trying fallback...");
+
+                    mBluetoothSocket =(BluetoothSocket) mDevice.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(mDevice,1);
+                    mBluetoothSocket.connect();
+                    Log.e("","Connected");
+                }
+                catch (Exception e2) {
+                    Log.e("", "Couldn't establish Bluetooth connection!");
+                    try {
+                        mBluetoothSocket.close();
+                    } catch (IOException ex) {
+                        Log.e(TAG, "Could not close the client socket", ex);
+                    }
+
+                    mBluetoothSocket = null;
+                    mManageConnectedSocket.onFailure();
+                    return;
+                }
+            }
+
+            // The connection attempt succeeded. Perform work associated with
+            // the connection in a separate thread.
+            mManageConnectedSocket.manage(mBluetoothSocket);
+        }
+
+        // Closes the client socket and causes the thread to finish.
+        public void cancel() {
+            try {
+                mBluetoothSocket.close();
+            } catch (IOException e) {
+                Log.e(TAG, "Could not close the client socket", e);
+            }
+        }
+    }
+
+    public interface OnConnected {
+        void onConnected(boolean success);
+    }
+
+    private interface ManageConnectedSocket {
+        void manage(final BluetoothSocket bluetoothSocket);
+        void onFailure();
+    }
+
 
     /**
      * Defines several constants used when transmitting messages between the

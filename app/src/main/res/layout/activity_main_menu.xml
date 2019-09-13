@@ -34,6 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:textSize="12pt"
+        android:textColor="#FFFFFF"
         android:text="@string/Brightness"/>
 
     <SeekBar
@@ -49,6 +50,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="15pt"
+        android:textColor="#FFFFFF"
         android:layout_marginTop="10dp"/>
 
     <include

@@ -14,6 +14,7 @@
     <string name="SavedDeviceNotFound">Das gespeicherte Gerät kann nicht gefunden werden</string>
     <string name="NoDeviceSaved">Kein Gerät hinterlegt</string>
     <string name="FailedToConnect">Verbinden gescheitert</string>
+    <string name="Connecting">Verbindungsaufbau läuft</string>
 
     <!-- Add Device Activity -->
     <string name="DeviceSetToSaved">Gerät gespeichert</string>

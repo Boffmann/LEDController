@@ -19,6 +19,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hendrik.ledcontroller.Bluetooth.BTService;
@@ -45,6 +47,8 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
 //MEMBER
 
     Button connectToLastButton = null;
+    ProgressBar progressSpinner = null;
+    TextView progressTextView = null;
 
 //ENDREGION MEMBER
 
@@ -107,12 +111,27 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
                 connectToLastButton.setText(String.format(getResources().getString(R.string.ConnectToLast), deviceName));
                 connectToLastButton.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-                        if (mBTService.connectToDevice(macAddress)) {
-                            startMainMenuActivity();
-                        } else {
-                            Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.FailedToConnect), Toast.LENGTH_LONG);
-                            toast.show();
-                        }
+                        progressSpinner.setVisibility(View.VISIBLE);
+                        progressTextView.setVisibility(View.VISIBLE);
+
+                        mBTService.connectToDevice(macAddress, new BTService.OnConnected() {
+                            @Override
+                            public void onConnected(boolean success) {
+                                if (success) {
+                                    startMainMenuActivity();
+                                } else {
+                                    runOnUiThread(new Runnable() {
+                                        public void run() {
+                                            Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.FailedToConnect), Toast.LENGTH_LONG);
+                                            toast.show();
+
+                                            progressSpinner.setVisibility(View.INVISIBLE);
+                                            progressTextView.setVisibility(View.INVISIBLE);
+                                        }
+                                    });
+                                }
+                            }
+                        });
                     }
                 });
             } else {
@@ -134,6 +153,13 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
 
     private void setupLayout() {
         setContentView(R.layout.bt_activity_view);
+
+        progressSpinner = findViewById(R.id.progressBar_cyclic);
+        progressSpinner.setVisibility(View.INVISIBLE);
+
+        progressTextView = findViewById(R.id.progress_text);
+        progressTextView.setVisibility(View.INVISIBLE);
+
         connectToLastButton = findViewById(R.id.connect_to_last_button);
 
         Button addDeviceButton = findViewById(R.id.add_device_button);
@@ -142,7 +168,6 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
                 startAddDeviceActivity();
             }
         });
-        // TODO
     }
 
 // ENDREGION INIT
