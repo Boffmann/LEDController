@@ -1,5 +1,6 @@
 package com.hendrik.ledcontroller;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
@@ -47,6 +48,10 @@ public class SplashActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch(requestCode) {
             case REQUEST_CODE_ENABLE_BT:
+                if (resultCode == Activity.RESULT_CANCELED) {
+                    finish();
+                    System.exit(0);
+                }
                 startApplication();
                 break;
         }
