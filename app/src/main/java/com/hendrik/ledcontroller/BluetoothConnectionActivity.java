@@ -8,6 +8,9 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -79,6 +82,35 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
 
     protected void onBTConnected() {
         checkSavedDevice();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        super.onCreateOptionsMenu(menu);
+
+        MenuInflater inflater = getMenuInflater();
+
+        inflater.inflate(R.menu.main_menu, menu);
+
+        return true;
+
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+
+            case R.id.new_device:
+
+                startAddDeviceActivity();
+                return true;
+
+            default:
+
+                return super.onOptionsItemSelected(item);
+        }
+
     }
 
 
