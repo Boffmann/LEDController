@@ -16,8 +16,10 @@ import android.widget.Toast;
 
 import com.hendrik.ledcontroller.Bluetooth.BTService;
 import com.hendrik.ledcontroller.DataStructure.DeviceArrayAdapter;
+import com.hendrik.ledcontroller.Utils.Settings;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 public class AddDeviceActivity extends BaseBTActivity {
 
@@ -65,10 +67,10 @@ public class AddDeviceActivity extends BaseBTActivity {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             BluetoothDevice selectedDevice = (BluetoothDevice) adapterView.getItemAtPosition(i);
-            SharedPreferences sharedPref= getSharedPreferences("BTSettings", 0);
+            SharedPreferences sharedPref= getSharedPreferences(Settings.SETTINGS, 0);
             SharedPreferences.Editor editor= sharedPref.edit();
-            editor.putString("mac_address", selectedDevice.getAddress());
-            editor.putString("device_name", selectedDevice.getName());
+            editor.putString(Settings.DEVICE_MAC, selectedDevice.getAddress());
+            editor.putString(Settings.DEVICE_NAME, selectedDevice.getName());
             editor.apply();
             Toast toast = Toast.makeText(getApplicationContext(), R.string.DeviceSetToSaved, Toast.LENGTH_LONG);
             toast.show();

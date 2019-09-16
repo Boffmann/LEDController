@@ -17,8 +17,10 @@ import android.widget.Toast;
 
 import com.hendrik.ledcontroller.Bluetooth.BTService;
 import com.hendrik.ledcontroller.Utils.ScreenResolution;
+import com.hendrik.ledcontroller.Utils.Settings;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 
 /**
@@ -85,9 +87,9 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
 // REGION INIT
 
     private void checkSavedDevice() {
-        SharedPreferences sharedPref= getSharedPreferences("BTSettings", 0);
-        final String macAddress = sharedPref.getString("mac_address", "");
-        final String deviceName = sharedPref.getString("device_name", "");
+        SharedPreferences sharedPref= getSharedPreferences(Settings.SETTINGS, 0);
+        final String macAddress = sharedPref.getString(Settings.DEVICE_MAC, Settings.getDefault(Settings.DEVICE_MAC));
+        final String deviceName = sharedPref.getString(Settings.DEVICE_NAME, Settings.getDefault(Settings.DEVICE_MAC));
 
         // Get saved Mac address, check if device is currently reachable. If not, start background
         // thread to permanently check if device becomes reachable. Adapt view based on result.
