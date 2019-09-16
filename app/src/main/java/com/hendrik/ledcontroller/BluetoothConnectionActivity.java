@@ -8,6 +8,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -40,6 +41,7 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
     Button connectToLastButton = null;
     ProgressBar progressSpinner = null;
     TextView progressTextView = null;
+    boolean mIsConnecting = false;
 
 //ENDREGION MEMBER
 
@@ -100,8 +102,25 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
             if (savedDevicePaired) {
                 connectToLastButton.setBackground(getRoundedDrawableWithColor(Color.GREEN));
                 connectToLastButton.setText(String.format(getResources().getString(R.string.ConnectToLast), deviceName));
+
+                connectToLastButton.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                            connectToLastButton.setBackground(getRoundedDrawableWithColor(Color.DKGRAY));
+                        } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                            connectToLastButton.setBackground(getRoundedDrawableWithColor(Color.GREEN));
+                        }
+                        return false;
+                    }
+                });
+
                 connectToLastButton.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
+                        if (mIsConnecting) {
+                            return;
+                        }
+                        mIsConnecting = true;
                         progressSpinner.setVisibility(View.VISIBLE);
                         progressTextView.setVisibility(View.VISIBLE);
 
@@ -121,6 +140,7 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
                                         }
                                     });
                                 }
+                                mIsConnecting = false;
                             }
                         });
                     }
@@ -172,7 +192,7 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
 
     private Drawable getRoundedDrawableWithColor(int color) {
         Drawable roundDrawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.roundedbutton);
-        roundDrawable.setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_ATOP);
+        roundDrawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
 
         return roundDrawable;
     }

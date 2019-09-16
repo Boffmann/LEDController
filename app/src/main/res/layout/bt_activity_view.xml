@@ -13,7 +13,7 @@
         android:layout_height="15dp"
         android:background="@drawable/roundedbutton"
         android:textColor="#ffffff"
-        android:layout_centerInParent="true" />
+        android:layout_centerInParent="true"/>
 
     <ProgressBar
         android:id="@+id/progressBar_cyclic"
