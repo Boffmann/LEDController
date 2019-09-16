@@ -26,6 +26,12 @@ public class MainMenu extends BaseBTActivity {
 
 //MEMBER
 
+    Button mOnButton = null;
+    Button mOffButton = null;
+    Button mDisconnectButton = null;
+    SeekBar mBrightnessSeekBar = null;
+    TextView mBrightnessSeekBarValueView = null;
+
     @Override
     protected void onBTConnected() {
         // DO nothing
@@ -69,31 +75,31 @@ public class MainMenu extends BaseBTActivity {
 
         setContentView(R.layout.activity_main_menu);
 
-        Button onButton = findViewById(R.id.button_on);
-        Button offButton = findViewById(R.id.button_off);
-        Button disconnectButton = findViewById(R.id.button_dissconnect);
-        SeekBar brightnessSeekBar = findViewById(R.id.brightness_seekbar);
-        final TextView brightnessSeekBarValueView = findViewById(R.id.brightness_seekbar_value);
-        brightnessSeekBarValueView.setText(brightnessSeekBar.getProgress()+"%");
+        mOnButton = findViewById(R.id.button_on);
+        mOffButton = findViewById(R.id.button_off);
+        mDisconnectButton = findViewById(R.id.button_dissconnect);
+        mBrightnessSeekBar = findViewById(R.id.brightness_seekbar);
+        mBrightnessSeekBarValueView = findViewById(R.id.brightness_seekbar_value);
+        mBrightnessSeekBarValueView.setText(mBrightnessSeekBar.getProgress()+"%");
 
-        onButton.setOnClickListener(new View.OnClickListener() {
+        mOnButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 BTService.write(new BTPackage(BTPackage.PackageType.ONOFF, (byte)1 ));
             }
         });
 
-        offButton.setOnClickListener(new View.OnClickListener() {
+        mOffButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 BTService.write(new BTPackage(BTPackage.PackageType.ONOFF, (byte)0 ));
             }
         });
 
-        brightnessSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        mBrightnessSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                brightnessSeekBarValueView.setText(seekBar.getProgress()+"%");
+                mBrightnessSeekBarValueView.setText(seekBar.getProgress()+"%");
             }
 
             @Override
@@ -107,7 +113,7 @@ public class MainMenu extends BaseBTActivity {
             }
         });
 
-        disconnectButton.setOnClickListener(new View.OnClickListener() {
+        mDisconnectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 BTService.write(new BTPackage(BTPackage.PackageType.ONOFF, (byte)0));

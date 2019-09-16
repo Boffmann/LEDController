@@ -1,30 +1,21 @@
 package com.hendrik.ledcontroller;
 
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hendrik.ledcontroller.Bluetooth.BTService;
-import com.hendrik.ledcontroller.DataStructure.DeviceArrayAdapter;
+import com.hendrik.ledcontroller.Utils.ScreenResolution;
 
 import java.util.ArrayList;
 
@@ -151,6 +142,18 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
         }
     }
 
+    private void positionViews() {
+        int screenWidth = ScreenResolution.getScreenWidth(this);
+        int screenHeight = ScreenResolution.getScreenHeight(this);
+
+        progressSpinner.setY((int)(screenHeight / 12.0));
+
+        progressTextView.setY((int)(screenHeight / 6.0));
+
+        connectToLastButton.getLayoutParams().width = ((int)(screenWidth * 0.9));
+        connectToLastButton.getLayoutParams().height = ((int)(screenHeight * 0.4));
+    }
+
     private void setupLayout() {
         setContentView(R.layout.bt_activity_view);
 
@@ -162,12 +165,7 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
 
         connectToLastButton = findViewById(R.id.connect_to_last_button);
 
-        Button addDeviceButton = findViewById(R.id.add_device_button);
-        addDeviceButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startAddDeviceActivity();
-            }
-        });
+        positionViews();
     }
 
 // ENDREGION INIT

@@ -361,7 +361,9 @@ public class BTService extends Service {
         // Closes the client socket and causes the thread to finish.
         public void cancel() {
             try {
-                mBluetoothSocket.close();
+                if (mBluetoothSocket != null) {
+                    mBluetoothSocket.close();
+                }
             } catch (IOException e) {
                 Log.e(TAG, "Could not close the client socket", e);
             }
