@@ -11,6 +11,7 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/colorPickerButton1"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_weight=".35"
@@ -18,11 +19,10 @@
             android:layout_marginLeft="20dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="10dp"
-            android:background="@color/colorButton1"
-            android:onClick="onColorButtonClicked"
             />
 
         <Button
+            android:id="@+id/colorPickerButton2"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_weight=".35"
@@ -30,11 +30,10 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="10dp"
-            android:background="@color/colorButton2"
-            android:onClick="onColorButtonClicked"
             />
 
         <Button
+            android:id="@+id/colorPickerButton3"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_weight=".35"
@@ -42,8 +41,6 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="10dp"
-            android:background="@color/colorButton3"
-            android:onClick="onColorButtonClicked"
             />
 
     </LinearLayout>
@@ -54,6 +51,7 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/colorPickerButton4"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_weight=".35"
@@ -61,11 +59,10 @@
             android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:background="@color/colorButton4"
-            android:onClick="onColorButtonClicked"
             />
 
         <Button
+            android:id="@+id/colorPickerButton5"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_weight=".35"
@@ -73,11 +70,10 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:background="@color/colorButton5"
-            android:onClick="onColorButtonClicked"
             />
 
         <Button
+            android:id="@+id/colorPickerButton6"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_weight=".35"
@@ -85,8 +81,6 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:background="@color/colorButton6"
-            android:onClick="onColorButtonClicked"
             />
 
     </LinearLayout>
@@ -97,6 +91,7 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/colorPickerButton7"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_weight=".35"
@@ -104,11 +99,10 @@
             android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="20dp"
-            android:background="@color/colorButton7"
-            android:onClick="onColorButtonClicked"
             />
 
         <Button
+            android:id="@+id/colorPickerButton8"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_weight=".35"
@@ -116,11 +110,10 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="20dp"
-            android:background="@color/colorButton8"
-            android:onClick="onColorButtonClicked"
             />
 
         <Button
+            android:id="@+id/colorPickerButton9"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_weight=".35"
@@ -128,8 +121,6 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="20dp"
-            android:background="@color/colorButton9"
-            android:onClick="onColorButtonClicked"
             />
 
     </LinearLayout>

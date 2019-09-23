@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.hendrik.ledcontroller.Bluetooth.BTService;
+import com.hendrik.ledcontroller.Utils.Settings;
 
 /**
  * Activity to make initial checks
@@ -36,7 +37,9 @@ public class SplashActivity extends AppCompatActivity {
                     .show();
         }
 
-        if (!bluetoothAdapter.isEnabled()) {
+        Settings.initSettings(getApplicationContext());
+
+        if (bluetoothAdapter != null && !bluetoothAdapter.isEnabled()) {
             Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBT, REQUEST_CODE_ENABLE_BT);
         } else {

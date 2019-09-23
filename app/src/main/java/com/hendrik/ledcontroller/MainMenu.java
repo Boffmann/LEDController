@@ -7,12 +7,13 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.hendrik.ledcontroller.Bluetooth.BTService;
 import com.hendrik.ledcontroller.Bluetooth.Command.BTPackage;
-
+import com.hendrik.ledcontroller.Utils.ColorPicker;
 
 
 public class MainMenu extends BaseBTActivity {
@@ -26,11 +27,12 @@ public class MainMenu extends BaseBTActivity {
 
 //MEMBER
 
-    Button mOnButton = null;
-    Button mOffButton = null;
-    Button mDisconnectButton = null;
-    SeekBar mBrightnessSeekBar = null;
-    TextView mBrightnessSeekBarValueView = null;
+    private Button mOnButton = null;
+    private Button mOffButton = null;
+    private Button mDisconnectButton = null;
+    private SeekBar mBrightnessSeekBar = null;
+    private TextView mBrightnessSeekBarValueView = null;
+    private ColorPicker mColorPickerView = null;
 
     @Override
     protected void onBTConnected() {
@@ -80,6 +82,7 @@ public class MainMenu extends BaseBTActivity {
         mDisconnectButton = findViewById(R.id.button_dissconnect);
         mBrightnessSeekBar = findViewById(R.id.brightness_seekbar);
         mBrightnessSeekBarValueView = findViewById(R.id.brightness_seekbar_value);
+        mColorPickerView = findViewById(R.id.colorPickerMainMenu);
         mBrightnessSeekBarValueView.setText(mBrightnessSeekBar.getProgress()+"%");
 
         mOnButton.setOnClickListener(new View.OnClickListener() {

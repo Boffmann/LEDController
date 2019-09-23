@@ -67,7 +67,7 @@ public class AddDeviceActivity extends BaseBTActivity {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             BluetoothDevice selectedDevice = (BluetoothDevice) adapterView.getItemAtPosition(i);
-            SharedPreferences sharedPref= getSharedPreferences(Settings.SETTINGS, 0);
+            SharedPreferences sharedPref = Settings.getSharedPreferences(getApplicationContext());
             SharedPreferences.Editor editor= sharedPref.edit();
             editor.putString(Settings.DEVICE_MAC, selectedDevice.getAddress());
             editor.putString(Settings.DEVICE_NAME, selectedDevice.getName());

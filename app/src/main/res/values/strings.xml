@@ -20,4 +20,13 @@
     <string name="DeviceSetToSaved">Gerät gespeichert</string>
     <string name="PairedDevicesList">Gepaarte Geräte</string>
     <string name="DiscoverUnpairedDevices">Nahe, noch nicht geparte Geräte</string>
+
+    <!-- Select new Color Activity -->
+    <string name="TestColor">Farbe testen</string>
+    <string name="ConfirmColor">Speichern</string>
+    <string name="CancelColorSelection">Abbrechen</string>
+
+    <!-- Settings Activity -->
+    <string name="ConfirmSettings">Bestätigen</string>
+    <string name="RestoreDefaultSettings">Zurücksetzen</string>
 </resources>

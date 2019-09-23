@@ -3,14 +3,10 @@
     <!-- TODO Icons hinzufügen -->
     <item android:id="@+id/new_device"
 
-    android:title="Add" />
+    android:title="Add Device" />
 
     <item android:id="@+id/settings"
 
-        android:title="Add" />
+        android:title="Settings" />
     />
-
-    <item android:id="@+id/about"
-
-    android:title="About" />
 </menu>

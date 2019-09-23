@@ -1,6 +1,7 @@
 package com.hendrik.ledcontroller;
 
 import android.content.ComponentName;
+import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +28,26 @@ public abstract class BaseBTActivity extends AppCompatActivity {
     protected BTService mBTService = null;
 
 // ENDREGION MEMBER
+
+// REGION ACTIVITY WORKFLOW
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent bindServiceIntent = new Intent(this, BTService.class);
+        bindService(bindServiceIntent, mBTServiceConnection, BTService.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        unbindService(mBTServiceConnection);
+        Intent intent = new Intent(this, BTService.class);
+        stopService(intent);
+    }
+
+// ENDREGION ACTIVITY WORKFLOW
 
     protected abstract void onBTConnected();
 

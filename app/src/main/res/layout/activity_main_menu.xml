@@ -53,13 +53,11 @@
         android:textColor="#FFFFFF"
         android:layout_marginTop="10dp"/>
 
-    <include
-        layout="@layout/color_picker"
-        android:id="@+id/includedLayout"
+    <com.hendrik.ledcontroller.Utils.ColorPicker
+        android:id="@+id/colorPickerMainMenu"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="10dp"/>
+        android:layout_height="wrap_content">
+    </com.hendrik.ledcontroller.Utils.ColorPicker>
 
     <Button
         android:id="@+id/button_dissconnect"

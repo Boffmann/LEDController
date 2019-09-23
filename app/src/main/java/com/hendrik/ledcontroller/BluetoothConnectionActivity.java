@@ -62,17 +62,11 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Intent bindServiceIntent = new Intent(this, BTService.class);
-        bindService(bindServiceIntent, mBTServiceConnection, BTService.BIND_AUTO_CREATE);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        unbindService(mBTServiceConnection);
-        Intent intent = new Intent(this, BTService.class);
-        stopService(intent);
     }
 
     @Override
@@ -106,6 +100,11 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
                 startAddDeviceActivity();
                 return true;
 
+            case R.id.settings:
+
+                startSettingsActivity();
+                return true;
+
             default:
 
                 return super.onOptionsItemSelected(item);
@@ -119,7 +118,7 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
 // REGION INIT
 
     private void checkSavedDevice() {
-        SharedPreferences sharedPref= getSharedPreferences(Settings.SETTINGS, 0);
+        SharedPreferences sharedPref = Settings.getSharedPreferences(getApplicationContext());
         final String macAddress = sharedPref.getString(Settings.DEVICE_MAC, Settings.getDefault(Settings.DEVICE_MAC));
         final String deviceName = sharedPref.getString(Settings.DEVICE_NAME, Settings.getDefault(Settings.DEVICE_MAC));
 
@@ -236,6 +235,11 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
      */
     private void startMainMenuActivity() {
         Intent intent = new Intent(this, MainMenu.class);
+        startActivity(intent);
+    }
+
+    private void startSettingsActivity() {
+        Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
 
