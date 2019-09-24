@@ -9,17 +9,20 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.hendrik.ledcontroller.Bluetooth.BTService;
-import com.hendrik.ledcontroller.Utils.ColorPicker;
 import com.hendrik.ledcontroller.Utils.Settings;
 
+/**
+ * Class that allows to select and test new RGB Colors for ColorPicker. Colors are buffered in shared preferences
+ */
 public class SelectNewColorActivity extends BaseBTActivity {
 
 // REGION CONSTANTS
+
+    /** Class TAG */
+    private static final String TAG = "SelectNewColorActivity";
 
 // ENDREGION CONSTANTS
 
@@ -34,17 +37,9 @@ public class SelectNewColorActivity extends BaseBTActivity {
 
     private LinearLayout mRoot = null;
 
-    private SeekBar mRedSeekbar = null;
-    private SeekBar mGreenSeekbar = null;
-    private SeekBar mBlueSeekbar = null;
-
     private TextView mRedSeekbarTextView = null;
     private TextView mGreenSeekbarTextView = null;
     private TextView mBlueSeekbarTextView = null;
-
-    private Button mTestColorButton = null;
-    private Button mConfirmButton = null;
-    private Button mCancelButton = null;
 
 // ENDREGION MEMBERS
 
@@ -79,12 +74,18 @@ public class SelectNewColorActivity extends BaseBTActivity {
 
 // REGION INIT
 
-    private void setCurrentColor() {
+    /**
+     * Set the currently selected color as background of this activity
+     */
+    private void setCurrentColorAsActivityBackground() {
 
         Drawable drawble = new ColorDrawable(Color.rgb(mRed, mGreen, mBlue));
         mRoot.setBackground(drawble);
     }
 
+    /**
+     * Setup activity layout
+     */
     private void setupLayout() {
 
         SharedPreferences sharedPref = Settings.getSharedPreferences(getApplicationContext());
@@ -92,17 +93,17 @@ public class SelectNewColorActivity extends BaseBTActivity {
 
         setContentView(R.layout.select_new_color_view);
 
-        mRedSeekbar = findViewById(R.id.red_seekbar);
-        mGreenSeekbar = findViewById(R.id.green_seekbar);
-        mBlueSeekbar = findViewById(R.id.blue_seekbar);
+        SeekBar mRedSeekbar = findViewById(R.id.red_seekbar);
+        SeekBar mGreenSeekbar = findViewById(R.id.green_seekbar);
+        SeekBar mBlueSeekbar = findViewById(R.id.blue_seekbar);
 
         mRedSeekbarTextView = findViewById(R.id.red_seekbar_value);
         mGreenSeekbarTextView = findViewById(R.id.green_seekbar_value);
         mBlueSeekbarTextView = findViewById(R.id.blue_seekbar_value);
 
-        mTestColorButton = findViewById(R.id.button_test_color);
-        mConfirmButton = findViewById(R.id.button_confirm_color);
-        mCancelButton = findViewById(R.id.button_cancel_color);
+        Button mTestColorButton = findViewById(R.id.button_test_color);
+        Button mConfirmButton = findViewById(R.id.button_confirm_color);
+        Button mCancelButton = findViewById(R.id.button_cancel_color);
 
         mRed = Color.red(mCurrentColor);
         mGreen = Color.green(mCurrentColor);
@@ -118,14 +119,14 @@ public class SelectNewColorActivity extends BaseBTActivity {
 
         mRoot = (LinearLayout) findViewById(R.id.select_new_color_layout);
 
-        setCurrentColor();
+        setCurrentColorAsActivityBackground();
 
         mRedSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mRed = progress;
                 mRedSeekbarTextView.setText(""+mRed);
-                setCurrentColor();
+                setCurrentColorAsActivityBackground();
             }
 
             @Override
@@ -144,7 +145,7 @@ public class SelectNewColorActivity extends BaseBTActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mGreen = progress;
                 mGreenSeekbarTextView.setText(""+mGreen);
-                setCurrentColor();
+                setCurrentColorAsActivityBackground();
             }
 
             @Override
@@ -163,7 +164,7 @@ public class SelectNewColorActivity extends BaseBTActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mBlue = progress;
                 mBlueSeekbarTextView.setText(""+mBlue);
-                setCurrentColor();
+                setCurrentColorAsActivityBackground();
             }
 
             @Override
@@ -189,6 +190,10 @@ public class SelectNewColorActivity extends BaseBTActivity {
 
 // ENDREGION INIT
 
+    /**
+     * Convert a button's id into the respective color id in the settings
+     * @return the color id in the settings
+     */
     private String getButtonsSettingID() {
         switch (mID) {
             case "colorPickerButton1":
@@ -215,6 +220,9 @@ public class SelectNewColorActivity extends BaseBTActivity {
         }
     }
 
+    /**
+     * Send intent to start SettingsActivity
+     */
     private void startSettingsActivity() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);

@@ -2,27 +2,28 @@ package com.hendrik.ledcontroller;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-import com.hendrik.ledcontroller.Bluetooth.BTService;
 import com.hendrik.ledcontroller.Utils.ColorPicker;
 import com.hendrik.ledcontroller.Utils.Settings;
 
+/**
+ * Settings activity for this app. Allows to selelect a field in color picker to select a new color for it
+ */
 public class SettingsActivity extends AppCompatActivity {
 
 // REGION CONSTANTS
+
+    /** Class TAG */
+    private static final String TAG = "SettingsActivity";
 
 // ENDREGION CONSTANTS
 
 // REGION MEMBERS
 
-    private ColorPicker mColorPicker = null;
-    private Button mRestoreDefaultButton = null;
-    private Button mConfirmButton = null;
 
 // ENDREGION MEMBERS
 
@@ -53,12 +54,15 @@ public class SettingsActivity extends AppCompatActivity {
 
 // REGION INIT
 
+    /**
+     * Setup the layout of this activity
+     */
     private void setupLayout() {
         setContentView(R.layout.settings_activity_view);
 
-        mColorPicker = findViewById(R.id.colorPickerSettings);
-        mRestoreDefaultButton = findViewById(R.id.restore_default);
-        mConfirmButton = findViewById(R.id.confirm_settings);
+        ColorPicker mColorPicker = findViewById(R.id.colorPickerSettings);
+        Button mRestoreDefaultButton = findViewById(R.id.restore_default);
+        Button mConfirmButton = findViewById(R.id.confirm_settings);
 
         mColorPicker.setOnClickColorAndISettingsListener(new ColorPicker.OnClickColorAndSettingsListener() {
             @Override
@@ -89,6 +93,11 @@ public class SettingsActivity extends AppCompatActivity {
 
 // ENDREGION INIT
 
+    /**
+     * Send intent to start SelectNewColorActivity and send respective parameters with the intent
+     * @param color the current color of the selected colorPicker button
+     * @param id the selected color picker button's id
+     */
     private void startSelectNewColorActivity(final int color, final String id) {
         Intent intent = new Intent(this, SelectNewColorActivity.class);
         intent.putExtra("currentColor",color);
@@ -96,11 +105,17 @@ public class SettingsActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * Send intent to start BluetoothConnectionActivity
+     */
     private void startBluetoothConnectActivity() {
         Intent intent = new Intent(this, BluetoothConnectionActivity.class);
         startActivity(intent);
     }
 
+    /**
+     * Send intent to start SettingsActivity and thereby restart the current activity
+     */
     private void restartSelf() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);

@@ -19,7 +19,6 @@ import com.hendrik.ledcontroller.DataStructure.DeviceArrayAdapter;
 import com.hendrik.ledcontroller.Utils.Settings;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 public class AddDeviceActivity extends BaseBTActivity {
 
@@ -102,8 +101,6 @@ public class AddDeviceActivity extends BaseBTActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Intent bindServiceIntent = new Intent(this, BTService.class);
-        bindService(bindServiceIntent, mBTServiceConnection, BTService.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -112,9 +109,6 @@ public class AddDeviceActivity extends BaseBTActivity {
 
         // Don't forget to unregister the ACTION_FOUND receiver.
         unregisterReceiver(mReceiverUnpairedFound);
-        unbindService(mBTServiceConnection);
-        Intent intent = new Intent(this, BTService.class);
-        stopService(intent);
     }
 
 

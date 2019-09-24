@@ -4,7 +4,6 @@ import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Build;
@@ -104,29 +103,6 @@ public class BTService extends Service {
 //ENDREGION LIFECYCLE
 
     /**
-     * Sets the connection state
-     * @param state the connection state to set
-     */
-    private void setState(int state) {
-        mState = state;
-        if (mHandler != null) {
-           //TODO mHandler.obtainMessage(AbstractActivity.MESSAGE_STATE_CHANGE, state, -1).sendToTarget();
-        }
-    }
-
-    /**
-     * Makes the device discoverable for other bluetooth devices
-     * @param time defines how long the device is discoverable
-     * @param context the context
-     */
-    public void setDiscoverable(final int time, final Context context) {
-        Intent discoverableIntent =
-                new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, time);
-        context.startActivity(discoverableIntent);
-    }
-
-    /**
      * Querying previously pared devices
      */
     public ArrayList<BluetoothDevice> QueryPairedDevices() {
@@ -162,11 +138,11 @@ public class BTService extends Service {
     }
 
     /**
-     * Create a connection to a bluetooth device
+     * Create a connection to a bluetooth device using a connectThread
      * @param btDevice The Bluetooth device to connect to
-     * @return
+     * @param connectCallback callback to notify if connecting was successful or not
      */
-    public void connect(final BluetoothDevice btDevice, final OnConnected connectCallback) {
+    private void connect(final BluetoothDevice btDevice, final OnConnected connectCallback) {
 
         // Reset all streams and socket.
         this.cancelConnection();
@@ -195,6 +171,7 @@ public class BTService extends Service {
     /**
      * Connect to a certain bluetooth device
      * @param bluetoothDevice the device to connect to
+     * @param onConnected callback to notify if connecting was successful or not
      */
     public void connectToDevice(final BluetoothDevice bluetoothDevice, final OnConnected onConnected) {
         if (mBluetoothAdapter.isDiscovering()){
@@ -204,12 +181,21 @@ public class BTService extends Service {
         this.connect(bluetoothDevice, onConnected);
     }
 
+    /**
+     * Connect to a certain bluetooth device using its mac address
+     * @param macAddress the mac address of the device to connect to
+     * @param onConnected callback to notify if connecting was successful or not
+     */
     public void connectToDevice(final String macAddress, final OnConnected onConnected) {
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(macAddress);
         this.connectToDevice(device, onConnected);
     }
 
-    public static void write(final BTPackage command, final int retries) {
+    /**
+     * Encode and write a BTPackage to the bluetooth output stream
+     * @param command the package to write to the output stream
+     */
+    public static void write(final BTPackage command) {
         byte[] data = command.getData();
         for (int i = 0; i < data.length; i++) {
             System.out.println(data[i]);
@@ -222,13 +208,9 @@ public class BTService extends Service {
     }
 
     /**
-     * Write a byte stream to the connected BT Device
-     * @param command The unserialized command to transmit to the BTDevice
+     * Read data from the bluetooth input stream
+     * @return the read data
      */
-    public static void write(final BTPackage command) {
-        write(command, 0);
-    }
-
     public static byte[] read() {
         byte[] inputBuffer = new byte[1];
         try {
@@ -289,11 +271,23 @@ public class BTService extends Service {
 
 //REGION CLASSES
 
+    /**
+     * Thread to manage asynchronous connecting to a bluetooth device
+     */
     private class ConnectThread extends Thread {
+
+        /** Socket of the bluetooth connection */
         private BluetoothSocket mBluetoothSocket;
+        /** Device to connect to */
         private final BluetoothDevice mDevice;
+        /** Callbacks to notify caller about different status updates during connection */
         private final ManageConnectedSocket mManageConnectedSocket;
 
+        /**
+         * Constructor to create a connected thread that connects to a device
+         * @param btDevice The device to connect to
+         * @param manageConnectedSocket Callbacks to notify caller about different status updates during connection
+         */
         public ConnectThread(BluetoothDevice btDevice, final ManageConnectedSocket manageConnectedSocket) {
             // Use a temporary object that is later assigned to mmSocket
             // because mmSocket is final.
@@ -321,6 +315,9 @@ public class BTService extends Service {
             mBluetoothSocket = tmp;
         }
 
+        /**
+         * Start the thread. Here, the actual connecting takes place using a fallback method to support more devices
+         */
         public void run() {
             // Cancel discovery because it otherwise slows down the connection.
             mBluetoothAdapter.cancelDiscovery();
@@ -358,7 +355,9 @@ public class BTService extends Service {
             mManageConnectedSocket.manage(mBluetoothSocket);
         }
 
-        // Closes the client socket and causes the thread to finish.
+        /**
+         * Closes the client socket and causes the thread to finish.
+         */
         public void cancel() {
             try {
                 if (mBluetoothSocket != null) {
@@ -370,24 +369,31 @@ public class BTService extends Service {
         }
     }
 
+    /**
+     * Interface to notify about success of connecting
+     */
     public interface OnConnected {
+        /**
+         * Call when connection either succeeded or failed
+         * @param success true if connection succeeded, false otherwise
+         */
         void onConnected(boolean success);
     }
 
-    private interface ManageConnectedSocket {
-        void manage(final BluetoothSocket bluetoothSocket);
-        void onFailure();
-    }
-
-
     /**
-     * Defines several constants used when transmitting messages between the
-     * service and the UI.
+     * Collection of callbacks to notify about updates during connection phase
      */
-    private interface MessageConstants {
-        public static final int MESSAGE_READ = 0;
-        public static final int MESSAGE_WRITE = 1;
-        public static final int MESSAGE_TOAST = 2;
+    private interface ManageConnectedSocket {
+        /**
+         * Called when connection succeeded to further manage connection
+         * @param bluetoothSocket socket of the successful bluetooth connection
+         */
+        void manage(final BluetoothSocket bluetoothSocket);
+
+        /**
+         * Called when the connection failed to react to this
+         */
+        void onFailure();
     }
 
     /**

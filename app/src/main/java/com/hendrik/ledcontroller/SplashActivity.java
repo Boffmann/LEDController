@@ -12,7 +12,7 @@ import com.hendrik.ledcontroller.Bluetooth.BTService;
 import com.hendrik.ledcontroller.Utils.Settings;
 
 /**
- * Activity to make initial checks
+ * Activity to make initial checks and setups
  */
 public class SplashActivity extends AppCompatActivity {
 

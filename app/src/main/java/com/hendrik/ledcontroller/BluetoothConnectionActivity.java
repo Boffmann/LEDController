@@ -23,7 +23,6 @@ import com.hendrik.ledcontroller.Utils.ScreenResolution;
 import com.hendrik.ledcontroller.Utils.Settings;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 
 /**
@@ -78,6 +77,11 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
         checkSavedDevice();
     }
 
+    /**
+     * Create the menu in upper right corner
+     * @param menu Menu to create
+     * @return true on success false otherwise
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -88,9 +92,13 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
         inflater.inflate(R.menu.main_menu, menu);
 
         return true;
-
     }
 
+    /**
+     * Called when an menu option is selected
+     * @param item the item that is selected
+     * @return true if handled, false otherwise
+     */
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
@@ -117,6 +125,9 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
 
 // REGION INIT
 
+    /**
+     * Check if device is saved where app can connect to. Adjusts "connect to last button" accordingly
+     */
     private void checkSavedDevice() {
         SharedPreferences sharedPref = Settings.getSharedPreferences(getApplicationContext());
         final String macAddress = sharedPref.getString(Settings.DEVICE_MAC, Settings.getDefault(Settings.DEVICE_MAC));
@@ -195,6 +206,9 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
         }
     }
 
+    /**
+     * Position the views in this activity based on the devices screen resolution
+     */
     private void positionViews() {
         int screenWidth = ScreenResolution.getScreenWidth(this);
         int screenHeight = ScreenResolution.getScreenHeight(this);
@@ -207,6 +221,9 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
         connectToLastButton.getLayoutParams().height = ((int)(screenHeight * 0.4));
     }
 
+    /**
+     * Setup activitie's layout
+     */
     private void setupLayout() {
         setContentView(R.layout.bt_activity_view);
 
@@ -223,6 +240,11 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
 
 // ENDREGION INIT
 
+    /**
+     * Create a rounded drawable with a certain color
+     * @param color color to create drawable in
+     * @return the final rounded drawable
+     */
     private Drawable getRoundedDrawableWithColor(int color) {
         Drawable roundDrawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.roundedbutton);
         roundDrawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
@@ -238,6 +260,9 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
         startActivity(intent);
     }
 
+    /**
+     * Calls intent for SettingsActivity
+     */
     private void startSettingsActivity() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);

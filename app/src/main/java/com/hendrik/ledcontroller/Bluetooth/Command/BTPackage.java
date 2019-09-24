@@ -1,28 +1,53 @@
 package com.hendrik.ledcontroller.Bluetooth.Command;
 
+/**
+ * A class that encapsulates a Bluetooth Packet.
+ * It consists of a Type and data depending on the type
+ *
+ */
 public class BTPackage {
 
+    /**
+     * Enum to represent the packet type
+     */
     public enum PackageType {
         ONOFF,
         BRIGHTNESS,
         COLOR
     }
 
+    /** Class TAG */
     private final static String TAG = "BTPackage";
+    /** Type of the packet */
     private byte mType;
+    /** Corresponding data to transmit */
     private byte[] mData;
 
+    /**
+     * Constructor to build of a type and a single data entry
+     * @param type Type of the packet
+     * @param data data byte value
+     */
     public BTPackage (PackageType type, byte data) {
         init(type);
         mData = new byte[]{data};
     }
 
+    /**
+     * Constructor to build of a type and a data byte array
+     * @param type The type of the packet
+     * @param data The data values
+     */
     public BTPackage (PackageType type, byte[] data) {
         assert data.length < 3;
         init(type);
         mData = data;
     }
 
+    /**
+     * Initialize the packet. Makes a byte value out of the packetType
+     * @param type packet type of the packet
+     */
     private void init(PackageType type) {
         switch (type) {
             case ONOFF:

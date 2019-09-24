@@ -8,8 +8,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Hendrik Tjabben
+ *
+ * The bluetooth application
  */
-
 public class BTApplication extends Application {
 
 //REGION CONSTANTS

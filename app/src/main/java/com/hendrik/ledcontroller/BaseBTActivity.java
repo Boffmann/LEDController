@@ -13,6 +13,9 @@ import com.hendrik.ledcontroller.Bluetooth.BTService;
  * @author Hendrik Tjabben
  */
 
+/**
+ * Base class for all Activities that require bluetooth support
+ */
 public abstract class BaseBTActivity extends AppCompatActivity {
 
 //CONSTANTS
@@ -31,6 +34,9 @@ public abstract class BaseBTActivity extends AppCompatActivity {
 
 // REGION ACTIVITY WORKFLOW
 
+    /**
+     * Bind to bluetooth service
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -38,6 +44,9 @@ public abstract class BaseBTActivity extends AppCompatActivity {
         bindService(bindServiceIntent, mBTServiceConnection, BTService.BIND_AUTO_CREATE);
     }
 
+    /**
+     * Unbind from bluetooth service and stop it
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -49,10 +58,14 @@ public abstract class BaseBTActivity extends AppCompatActivity {
 
 // ENDREGION ACTIVITY WORKFLOW
 
+    /**
+     * Abstract method to call right after binding to bluetooth service
+     */
     protected abstract void onBTConnected();
 
     /** The service connection to talk to the Bluetooth service */
     protected ServiceConnection mBTServiceConnection = new ServiceConnection() {
+
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             Log.e(TAG, "OnServiceConnected");
