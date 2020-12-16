@@ -15,6 +15,7 @@
     <string name="NoDeviceSaved">Kein Gerät hinterlegt</string>
     <string name="FailedToConnect">Verbinden gescheitert</string>
     <string name="Connecting">Verbindungsaufbau läuft</string>
+    <string name="Version">20201216</string>
 
     <!-- Add Device Activity -->
     <string name="DeviceSetToSaved">Gerät gespeichert</string>

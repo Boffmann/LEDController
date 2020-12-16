@@ -1,58 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/select_new_color_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <SeekBar
-        android:id="@+id/red_seekbar"
+    <top.defaults.colorpicker.ColorPickerView
+        android:id="@+id/DuanHoancolorPicker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:max="255"
-        android:progress="0"/>
-
-    <TextView
-        android:id="@+id/red_seekbar_value"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="15pt"
-        android:textColor="#FFFFFF"
-        android:layout_marginTop="10dp"/>
-
-    <SeekBar
-        android:id="@+id/green_seekbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:max="255"
-        android:progress="0"/>
-
-    <TextView
-        android:id="@+id/green_seekbar_value"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="15pt"
-        android:textColor="#FFFFFF"
-        android:layout_marginTop="10dp"/>
-
-    <SeekBar
-        android:id="@+id/blue_seekbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:max="255"
-        android:progress="0"/>
-
-    <TextView
-        android:id="@+id/blue_seekbar_value"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="15pt"
-        android:textColor="#FFFFFF"
-        android:layout_marginTop="10dp"/>
+        app:enableAlpha="false"/>
 
     <Button
         android:id="@+id/button_test_color"

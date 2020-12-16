@@ -1,5 +1,6 @@
 package com.hendrik.ledcontroller;
 
+import android.bluetooth.BluetoothDevice;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -8,6 +9,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.hendrik.ledcontroller.Bluetooth.BTService;
+import com.hendrik.ledcontroller.Bluetooth.Command.BTPackage;
+
+import java.util.ArrayList;
 
 /**
  * @author Hendrik Tjabben
@@ -82,4 +86,20 @@ public abstract class BaseBTActivity extends AppCompatActivity {
             mBTService = null;
         }
     };
+
+    /**
+     * Querying previously pared devices
+     */
+    protected ArrayList<BluetoothDevice> QueryPairedDevices() {
+        return this.mBTService.QueryPairedDevices();
+    }
+
+    /**
+     * Connect to a certain bluetooth device using its mac address
+     * @param macAddress the mac address of the device to connect to
+     * @param onConnected callback to notify if connecting was successful or not
+     */
+    protected void connectToDevice(final String macAddress, final BTService.OnConnected onConnected) {
+        this.mBTService.connectToDevice(macAddress, onConnected);
+    }
 }

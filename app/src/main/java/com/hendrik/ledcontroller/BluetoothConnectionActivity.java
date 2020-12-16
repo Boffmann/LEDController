@@ -18,7 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hendrik.ledcontroller.Bluetooth.BTService;
+import com.hendrik.ledcontroller.Bluetooth.BTService.OnConnected;
 import com.hendrik.ledcontroller.Utils.ScreenResolution;
 import com.hendrik.ledcontroller.Utils.Settings;
 
@@ -42,10 +42,11 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
 
 //MEMBER
 
-    Button connectToLastButton = null;
-    ProgressBar progressSpinner = null;
-    TextView progressTextView = null;
-    boolean mIsConnecting = false;
+    private Button connectToLastButton = null;
+    private ProgressBar progressSpinner = null;
+    private TextView progressTextView = null;
+    private TextView versionTextView = null;
+    private boolean mIsConnecting = false;
 
 //ENDREGION MEMBER
 
@@ -89,7 +90,7 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
 
         MenuInflater inflater = getMenuInflater();
 
-        inflater.inflate(R.menu.main_menu, menu);
+        inflater.inflate(R.menu.main_menu_bt_activity, menu);
 
         return true;
     }
@@ -106,11 +107,6 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
             case R.id.new_device:
 
                 startAddDeviceActivity();
-                return true;
-
-            case R.id.settings:
-
-                startSettingsActivity();
                 return true;
 
             default:
@@ -136,7 +132,7 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
         // Get saved Mac address, check if device is currently reachable. If not, start background
         // thread to permanently check if device becomes reachable. Adapt view based on result.
         if (macAddress != null && !macAddress.equals("")) {
-            ArrayList<BluetoothDevice> pairedDevices = mBTService.QueryPairedDevices();
+            ArrayList<BluetoothDevice> pairedDevices = QueryPairedDevices();
             boolean savedDevicePaired = false;
             for (BluetoothDevice device : pairedDevices) {
                 if (device.getAddress().equals(macAddress)) {
@@ -168,7 +164,7 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
                         progressSpinner.setVisibility(View.VISIBLE);
                         progressTextView.setVisibility(View.VISIBLE);
 
-                        mBTService.connectToDevice(macAddress, new BTService.OnConnected() {
+                        connectToDevice(macAddress, new OnConnected() {
                             @Override
                             public void onConnected(boolean success) {
                                 if (success) {
@@ -233,6 +229,8 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
         progressTextView = findViewById(R.id.progress_text);
         progressTextView.setVisibility(View.INVISIBLE);
 
+        versionTextView = findViewById(R.id.version_text);
+
         connectToLastButton = findViewById(R.id.connect_to_last_button);
 
         positionViews();
@@ -257,14 +255,6 @@ public class BluetoothConnectionActivity extends BaseBTActivity {
      */
     private void startMainMenuActivity() {
         Intent intent = new Intent(this, MainMenu.class);
-        startActivity(intent);
-    }
-
-    /**
-     * Calls intent for SettingsActivity
-     */
-    private void startSettingsActivity() {
-        Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
 

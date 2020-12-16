@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
+    android:background="@color/colorPrimaryBackground"
     android:orientation="vertical"
     android:id="@+id/bt_activity_view">
 
@@ -27,6 +28,15 @@
         android:text="@string/Connecting"
         android:textColor="#FFFFFF"
         android:textSize="12pt"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:id="@+id/version_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Version"
+        android:textColor="#FFFFFF"
+        android:textSize="4pt"
         android:layout_centerHorizontal="true"/>
 
 

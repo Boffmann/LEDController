@@ -3,16 +3,23 @@ package com.hendrik.ledcontroller;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.hendrik.ledcontroller.Bluetooth.BTService;
+import com.hendrik.ledcontroller.Bluetooth.Command.BTPackage;
 import com.hendrik.ledcontroller.Utils.Settings;
+
+import top.defaults.colorpicker.ColorObserver;
+import top.defaults.colorpicker.ColorPickerView;
 
 /**
  * Class that allows to select and test new RGB Colors for ColorPicker. Colors are buffered in shared preferences
@@ -36,10 +43,6 @@ public class SelectNewColorActivity extends BaseBTActivity {
     private int mBlue;
 
     private LinearLayout mRoot = null;
-
-    private TextView mRedSeekbarTextView = null;
-    private TextView mGreenSeekbarTextView = null;
-    private TextView mBlueSeekbarTextView = null;
 
 // ENDREGION MEMBERS
 
@@ -93,90 +96,29 @@ public class SelectNewColorActivity extends BaseBTActivity {
 
         setContentView(R.layout.select_new_color_view);
 
-        SeekBar mRedSeekbar = findViewById(R.id.red_seekbar);
-        SeekBar mGreenSeekbar = findViewById(R.id.green_seekbar);
-        SeekBar mBlueSeekbar = findViewById(R.id.blue_seekbar);
+        ColorPickerView colorView = findViewById(R.id.DuanHoancolorPicker);
 
-        mRedSeekbarTextView = findViewById(R.id.red_seekbar_value);
-        mGreenSeekbarTextView = findViewById(R.id.green_seekbar_value);
-        mBlueSeekbarTextView = findViewById(R.id.blue_seekbar_value);
+        mRoot = findViewById(R.id.select_new_color_layout);
+
+        colorView.subscribe(new ColorObserver() {
+            @Override
+            public void onColor(int color, boolean fromUser, boolean shouldPropagate) {
+                mRed = Color.red(color);
+                mGreen = Color.green(color);
+                mBlue = Color.blue(color);
+                setCurrentColorAsActivityBackground();
+            }
+        });
+
+        colorView.setInitialColor(mCurrentColor);
 
         Button mTestColorButton = findViewById(R.id.button_test_color);
         Button mConfirmButton = findViewById(R.id.button_confirm_color);
         Button mCancelButton = findViewById(R.id.button_cancel_color);
 
-        mRed = Color.red(mCurrentColor);
-        mGreen = Color.green(mCurrentColor);
-        mBlue = Color.blue(mCurrentColor);
-
-        mRedSeekbar.setProgress(mRed);
-        mGreenSeekbar.setProgress(mGreen);
-        mBlueSeekbar.setProgress(mBlue);
-
-        mRedSeekbarTextView.setText(""+mRed);
-        mGreenSeekbarTextView.setText(""+mGreen);
-        mBlueSeekbarTextView.setText(""+mBlue);
-
-        mRoot = (LinearLayout) findViewById(R.id.select_new_color_layout);
+        mRoot = findViewById(R.id.select_new_color_layout);
 
         setCurrentColorAsActivityBackground();
-
-        mRedSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mRed = progress;
-                mRedSeekbarTextView.setText(""+mRed);
-                setCurrentColorAsActivityBackground();
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-        mGreenSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mGreen = progress;
-                mGreenSeekbarTextView.setText(""+mGreen);
-                setCurrentColorAsActivityBackground();
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-        mBlueSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mBlue = progress;
-                mBlueSeekbarTextView.setText(""+mBlue);
-                setCurrentColorAsActivityBackground();
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
 
         mConfirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,6 +128,25 @@ public class SelectNewColorActivity extends BaseBTActivity {
                 startSettingsActivity();
             }
         });
+
+        mTestColorButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                byte colorArray[] = new byte[3];
+                colorArray[0] = (byte) mRed;
+                colorArray[1] = (byte) mGreen;
+                colorArray[2] = (byte) mBlue;
+                BTService.write(new BTPackage(BTPackage.PackageType.COLOR, colorArray));
+            }
+        });
+
+        mCancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startSettingsActivity();
+            }
+        });
+
     }
 
 // ENDREGION INIT

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryBackground"
     android:orientation="vertical">
 
     <com.hendrik.ledcontroller.Utils.ColorPicker
@@ -13,14 +14,14 @@
 
     <Button
         android:id="@+id/restore_default"
+        android:layout_width="15dp"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
         android:text="@string/RestoreDefaultSettings"/>
 
     <Button
         android:id="@+id/confirm_settings"
-        android:layout_width="match_parent"
+        android:layout_width="15dp"
         android:layout_height="wrap_content"
         android:text="@string/ConfirmSettings" />
 
-</LinearLayout>
+</RelativeLayout>

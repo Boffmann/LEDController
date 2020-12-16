@@ -3,6 +3,9 @@ package com.hendrik.ledcontroller;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -60,6 +63,44 @@ public class MainMenu extends BaseBTActivity {
         // DO nothing
     }
 
+    /**
+     * Create the menu in upper right corner
+     * @param menu Menu to create
+     * @return true on success false otherwise
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        super.onCreateOptionsMenu(menu);
+
+        MenuInflater inflater = getMenuInflater();
+
+        inflater.inflate(R.menu.main_menu_main_activity, menu);
+
+        return true;
+    }
+
+    /**
+     * Called when an menu option is selected
+     * @param item the item that is selected
+     * @return true if handled, false otherwise
+     */
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+
+            case R.id.settings:
+
+                startSettingsActivity();
+                return true;
+
+            default:
+
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
+
 //ENDREGION ACTIVITY LIFECYCLE
 
 //REGION INIT
@@ -113,7 +154,6 @@ public class MainMenu extends BaseBTActivity {
         mDisconnectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BTService.write(new BTPackage(BTPackage.PackageType.ONOFF, (byte)0));
                 mBTService.cancelConnection();
                 startBTConnectionActivity();
             }
@@ -139,6 +179,14 @@ public class MainMenu extends BaseBTActivity {
      */
     private void startBTConnectionActivity() {
         Intent intent = new Intent(this, BluetoothConnectionActivity.class);
+        startActivity(intent);
+    }
+
+    /**
+     * Calls intent for SettingsActivity
+     */
+    private void startSettingsActivity() {
+        Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
 

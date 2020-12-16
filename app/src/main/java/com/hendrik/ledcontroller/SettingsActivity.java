@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.hendrik.ledcontroller.Utils.ColorPicker;
+import com.hendrik.ledcontroller.Utils.ScreenResolution;
 import com.hendrik.ledcontroller.Utils.Settings;
 
 /**
@@ -24,6 +25,9 @@ public class SettingsActivity extends AppCompatActivity {
 
 // REGION MEMBERS
 
+    ColorPicker mColorPicker = null;
+    Button mRestoreDefaultButton = null;
+    Button mConfirmButton = null;
 
 // ENDREGION MEMBERS
 
@@ -47,7 +51,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        startBluetoothConnectActivity();
+        startMainActivity();
     }
 
 // ENDREGION WORKFLOW
@@ -55,14 +59,32 @@ public class SettingsActivity extends AppCompatActivity {
 // REGION INIT
 
     /**
+     * Position the views in this activity based on the devices screen resolution
+     */
+    private void positionViews() {
+        int screenWidth = ScreenResolution.getScreenWidth(this);
+        int screenHeight = ScreenResolution.getScreenHeight(this);
+
+        mColorPicker.setY((int)(screenHeight / 8.0));
+        mRestoreDefaultButton.setY((int)(screenHeight - (screenHeight / 3.0)));
+        mConfirmButton.setY((int)(screenHeight - (screenHeight / 3.0)));
+
+        mRestoreDefaultButton.setX((int)(screenWidth * 0.02));
+        mConfirmButton.setX((int)(screenWidth * 0.52));
+
+        mRestoreDefaultButton.getLayoutParams().width = ((int)(screenWidth * 0.46));
+        mConfirmButton.getLayoutParams().width = ((int)(screenWidth * 0.46));
+    }
+
+    /**
      * Setup the layout of this activity
      */
     private void setupLayout() {
         setContentView(R.layout.settings_activity_view);
 
-        ColorPicker mColorPicker = findViewById(R.id.colorPickerSettings);
-        Button mRestoreDefaultButton = findViewById(R.id.restore_default);
-        Button mConfirmButton = findViewById(R.id.confirm_settings);
+        mColorPicker = findViewById(R.id.colorPickerSettings);
+        mRestoreDefaultButton = findViewById(R.id.restore_default);
+        mConfirmButton = findViewById(R.id.confirm_settings);
 
         mColorPicker.setOnClickColorAndISettingsListener(new ColorPicker.OnClickColorAndSettingsListener() {
             @Override
@@ -89,6 +111,15 @@ public class SettingsActivity extends AppCompatActivity {
                 restartSelf();
             }
         });
+
+        mConfirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startMainActivity();
+            }
+        });
+
+        positionViews();
     }
 
 // ENDREGION INIT
@@ -108,8 +139,8 @@ public class SettingsActivity extends AppCompatActivity {
     /**
      * Send intent to start BluetoothConnectionActivity
      */
-    private void startBluetoothConnectActivity() {
-        Intent intent = new Intent(this, BluetoothConnectionActivity.class);
+    private void startMainActivity() {
+        Intent intent = new Intent(this, MainMenu.class);
         startActivity(intent);
     }
 
